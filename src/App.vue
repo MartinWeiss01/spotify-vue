@@ -5,7 +5,7 @@ import { onMounted } from "vue";
 
 const authStore = useAuthStore();
 onMounted(() => {
-  authStore.validateToken();
+  authStore.initUser();
 });
 </script>
 

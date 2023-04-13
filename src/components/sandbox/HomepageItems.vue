@@ -1,29 +1,37 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
 import PlaceholderItemVue from "./PlaceholderItem.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
-
+const userStore = useUserStore();
 const urlParams = new URLSearchParams(window.location.search);
+
 if (urlParams.has("error")) {
   // After login attempt, denied by user
   console.error(
-    `[ERROR] Access denied by user: ${urlParams.get(
+    `[App >> HomepageItems] Access denied by user: {error: ${urlParams.get(
       "error"
-    )} with state ${urlParams.get("state")}`
+    )}, state: ${urlParams.get("state")}}`
   );
 } else if (urlParams.has("code")) {
   // After login attempt, accepted by user
   console.info(
-    `[INFO] Access granted by user with state ${urlParams.get(
+    `[App >> HomepageItems] Access granted by user: {state: ${urlParams.get(
       "state"
-    )}}, requesting access token...`
+    )}, code: ${urlParams.get("code")}}`
   );
   authStore.requestAccessToken();
 } else {
-  /*
-    May be logged in already, or just visiting the page for the first time.
-  */
+  if (authStore.user.isLoggedIn) {
+    // Logged in
+    console.log(
+      `[App >> HomepageItems] User is logged in: {user: ${authStore.user}}`
+    );
+  } else {
+    // Not logged in
+    console.log(`[App >> HomepageItems] User is not logged in`);
+  }
 }
 
 const spotifyAuth = () => {
