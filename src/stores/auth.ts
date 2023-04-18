@@ -4,7 +4,7 @@ import Config from "@/config";
 import axios from "axios";
 import { setBearerToken, userEndpoints } from "@/utils/userEndpointsApi";
 import { reactive } from "vue";
-import { User } from "@/model/User";
+import type { User } from "@/model/User";
 
 const STORAGE_CODE_VERIFIER = "code_verifier"
 const STORAGE_AUTH_CODE = "auth_code"
