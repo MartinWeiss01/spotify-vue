@@ -14,18 +14,11 @@ onMounted(() => {
 <template>
   <v-app>
     <Header />
-    <v-main class="main-bg">
-      <v-container>
+    <v-main>
+      <v-container class="h-100">
         <RouterView />
       </v-container>
     </v-main>
     <Footer />
   </v-app>
 </template>
-
-<style scoped>
-.main-bg {
-  background-color: #1a1a1a;
-  color: #fff;
-}
-</style>
