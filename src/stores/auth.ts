@@ -213,5 +213,16 @@ export const useAuthStore = defineStore("auth", () => {
     window.location.href = Config.appUrl
   }
 
-  return { user, initUser, redirectToAuth, requestAccessToken, logout }
+  const handleAuthCallback = async () => {
+    const urlParams = new URLSearchParams(window.location.search)
+
+    if (urlParams.has("code")) {
+      // Access granted
+      await requestAccessToken()
+    }
+
+    window.location.replace(Config.appUrl)
+  }
+
+  return { user, initUser, redirectToAuth, requestAccessToken, logout, handleAuthCallback }
 })
