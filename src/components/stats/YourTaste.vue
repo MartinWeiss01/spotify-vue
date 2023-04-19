@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  genres: string[];
+  genres: [string, number][];
 }>();
 </script>
 

@@ -3,10 +3,9 @@ import { useUserStore } from "@/stores/user";
 import { reactive } from "vue";
 import YourTaste from "@/components/stats/YourTaste.vue";
 import YourTopTracks from "@/components/stats/YourTopTracks.vue";
-import YourTopTrackPlaceholder from "@/components/stats/YourTopTrackPlaceholder.vue";
 import YourTastePlaceholder from "@/components/stats/YourTastePlaceholder.vue";
 import YourTopArtists from "@/components/stats/YourTopArtists.vue";
-import YourTopArtistsPlaceholder from "@/components/stats/YourTopArtistsPlaceholder.vue";
+import MediaItemSkeleton from "@/components/stats/MediaItemSkeleton.vue";
 
 const userStore = useUserStore();
 const topArtists = reactive(userStore.topArtists.items);
@@ -25,10 +24,10 @@ if (topArtists.length === 0) {
 <template>
   <div class="flex-column">
     <YourTopArtists v-if="topArtists.length !== 0" :artists="topArtists" />
-    <YourTopArtistsPlaceholder v-else />
+    <MediaItemSkeleton title="Your Top Artists" v-else />
 
     <YourTopTracks v-if="topTracks.length !== 0" :tracks="topTracks" />
-    <YourTopTrackPlaceholder v-else />
+    <MediaItemSkeleton title="Your Top Tracks" v-else />
 
     <YourTaste v-if="topArtists.length !== 0" :genres="topGenres" />
     <YourTastePlaceholder v-else />

@@ -1,5 +1,6 @@
 import '@mdi/font/css/materialdesignicons.min.css'
 import 'vuetify/styles'
+import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 
 import { createVuetify } from 'vuetify'
 
@@ -15,5 +16,8 @@ export default createVuetify({
         }
       }
     }
+  },
+  components: {
+    VSkeletonLoader
   }
 })

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ItemWithArtwork from "./ItemWithArtwork.vue";
 import { TopArtist } from "@/model/TopArtist";
+import MediaItemSkeleton from "./MediaItemSkeleton.vue";
 
 const props = defineProps<{
   artists: TopArtist[];

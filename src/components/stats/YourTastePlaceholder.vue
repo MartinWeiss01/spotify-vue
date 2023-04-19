@@ -5,6 +5,15 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 <template>
   <div>
     <h1>Your Taste</h1>
-    <LoadingSpinner />
+    <div class="d-flex justify-space-between overflow-hidden">
+      <v-skeleton-loader
+        v-for="i in 10"
+        class="mr-2 mb-2 bg-grey-darken-4"
+        min-width="150"
+        max-height="50"
+        type="chip"
+        theme="chip"
+      ></v-skeleton-loader>
+    </div>
   </div>
 </template>
