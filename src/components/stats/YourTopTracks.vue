@@ -14,7 +14,9 @@ const props = defineProps<{
       <ItemWithArtwork
         v-for="(track, idx) in props.tracks"
         :key="track.id"
-        :artwork="track.album.images[0].url"
+        :artwork="
+          track.album?.images[0]?.url ?? '/fallbacks/no_album_image.svg'
+        "
       >
         <template #description>
           <p class="mt-2">{{ idx + 1 }}. {{ track.name }}</p>
