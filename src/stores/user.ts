@@ -2,7 +2,7 @@ import { userEndpoints } from "@/utils/userEndpointsApi";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 import type { TopTrack } from "@/model/TopTrack";
-import { TopArtist } from "@/model/TopArtist";
+import type { TopArtist } from "@/model/TopArtist";
 
 type TopGenres = [string, number]
 
