@@ -6,7 +6,7 @@ const props = defineProps<{
 
 <template>
   <v-slide-group-item>
-    <div class="mr-4">
+    <div class="ml-4">
       <v-img :width="200" :aspect-ratio="1" :src="props.artwork" cover>
         <template v-slot:placeholder>
           <div
