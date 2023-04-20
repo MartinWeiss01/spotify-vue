@@ -9,7 +9,7 @@ const props = defineProps<{
 
 <template>
   <div class="relative">
-    <h1>Your Top Artists</h1>
+    <h1 class="pl-4">Your Top Artists</h1>
     <v-slide-group class="pt-4 custom-arrow-positions" show-arrows>
       <MediaItem
         v-for="(artist, idx) in props.artists"

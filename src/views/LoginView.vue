@@ -4,7 +4,7 @@ import LoginWithSpotify from "@/components/login/LoginWithSpotify.vue";
 </script>
 
 <template>
-  <div class="d-flex justify-center h-100 align-center">
+  <div class="d-flex justify-center h-100 align-center pa-4">
     <div class="my-12">
       <AppHero />
       <LoginWithSpotify />
