@@ -33,7 +33,7 @@ if (topArtists.length === 0) {
       <MediaItemSkeleton title="Your Top Tracks" v-else />
     </div>
 
-    <div class="mt-10">
+    <div class="mt-10 mb-10">
       <YourTaste v-if="topArtists.length !== 0" :genres="topGenres" />
       <YourTastePlaceholder v-else />
     </div>

@@ -3,9 +3,9 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 </script>
 
 <template>
-  <div>
+  <div class="pl-4">
     <h1>Your Taste</h1>
-    <div class="d-flex justify-space-between overflow-hidden">
+    <div class="pt-4 d-flex justify-space-between overflow-hidden">
       <v-skeleton-loader
         v-for="i in 10"
         class="mr-2 mb-2 bg-grey-darken-4"

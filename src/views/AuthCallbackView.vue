@@ -7,5 +7,7 @@ authStore.handleAuthCallback();
 </script>
 
 <template>
-  <LoadingSpinner />
+  <div class="h-100 pa-4">
+    <LoadingSpinner />
+  </div>
 </template>

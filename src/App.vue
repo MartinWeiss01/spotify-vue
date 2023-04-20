@@ -15,7 +15,7 @@ onMounted(() => {
   <v-app>
     <Header />
     <v-main>
-      <v-container class="h-100">
+      <v-container class="h-100 pa-0">
         <RouterView />
       </v-container>
     </v-main>

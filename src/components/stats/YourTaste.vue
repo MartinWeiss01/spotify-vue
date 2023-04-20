@@ -5,7 +5,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div>
+  <div class="px-4">
     <h1>Your Taste</h1>
     <v-container>
       <v-row class="pt-4">
