@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ItemWithArtwork from "./ItemWithArtwork.vue";
-import { TopTrack } from "@/model/TopTrack";
+import MediaItem from "./MediaItem.vue";
+import type { TopTrack } from "@/model/TopTrack";
 
 const props = defineProps<{
   tracks: TopTrack[];
@@ -11,7 +11,7 @@ const props = defineProps<{
   <div>
     <h1>Your Top Tracks</h1>
     <v-slide-group class="pt-10 custom-arrow-positions" show-arrows>
-      <ItemWithArtwork
+      <MediaItem
         v-for="(track, idx) in props.tracks"
         :key="track.id"
         :artwork="
@@ -22,7 +22,7 @@ const props = defineProps<{
           <p class="mt-2">{{ idx + 1 }}. {{ track.name }}</p>
           <small>{{ track.artists[0].name }}</small>
         </template>
-      </ItemWithArtwork>
+      </MediaItem>
     </v-slide-group>
   </div>
 </template>

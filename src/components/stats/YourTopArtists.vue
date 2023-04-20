@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import ItemWithArtwork from "./ItemWithArtwork.vue";
-import { TopArtist } from "@/model/TopArtist";
-import MediaItemSkeleton from "./MediaItemSkeleton.vue";
+import MediaItem from "./MediaItem.vue";
+import type { TopArtist } from "@/model/TopArtist";
 
 const props = defineProps<{
   artists: TopArtist[];
@@ -12,7 +11,7 @@ const props = defineProps<{
   <div>
     <h1>Your Top Artists</h1>
     <v-slide-group class="pt-10 custom-arrow-positions" show-arrows>
-      <ItemWithArtwork
+      <MediaItem
         v-for="(artist, idx) in props.artists"
         :key="artist.id"
         :artwork="artist.images[0]?.url ?? '/fallbacks/no_artist_image.svg'"
@@ -20,7 +19,7 @@ const props = defineProps<{
         <template #description>
           <p class="mt-2">{{ idx + 1 }}. {{ artist.name }}</p>
         </template>
-      </ItemWithArtwork>
+      </MediaItem>
     </v-slide-group>
   </div>
 </template>
