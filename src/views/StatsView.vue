@@ -23,13 +23,19 @@ if (topArtists.length === 0) {
 
 <template>
   <div class="flex-column">
-    <YourTopArtists v-if="topArtists.length !== 0" :artists="topArtists" />
-    <MediaItemSkeleton title="Your Top Artists" v-else />
+    <div class="mt-10">
+      <YourTopArtists v-if="topArtists.length !== 0" :artists="topArtists" />
+      <MediaItemSkeleton title="Your Top Artists" v-else />
+    </div>
 
-    <YourTopTracks v-if="topTracks.length !== 0" :tracks="topTracks" />
-    <MediaItemSkeleton title="Your Top Tracks" v-else />
+    <div class="mt-10">
+      <YourTopTracks v-if="topTracks.length !== 0" :tracks="topTracks" />
+      <MediaItemSkeleton title="Your Top Tracks" v-else />
+    </div>
 
-    <YourTaste v-if="topArtists.length !== 0" :genres="topGenres" />
-    <YourTastePlaceholder v-else />
+    <div class="mt-10">
+      <YourTaste v-if="topArtists.length !== 0" :genres="topGenres" />
+      <YourTastePlaceholder v-else />
+    </div>
   </div>
 </template>

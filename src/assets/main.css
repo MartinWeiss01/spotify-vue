@@ -1,0 +1,14 @@
+.relative {
+  position: relative;
+}
+
+.custom-arrow-positions .v-slide-group__prev {
+  position: absolute;
+  top: 10px;
+  right: 4rem;
+}
+.custom-arrow-positions .v-slide-group__next {
+  position: absolute;
+  top: 10px;
+  right: 0;
+}

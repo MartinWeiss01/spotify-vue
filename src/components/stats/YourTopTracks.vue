@@ -8,9 +8,9 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div>
+  <div class="relative">
     <h1>Your Top Tracks</h1>
-    <v-slide-group class="pt-10 custom-arrow-positions" show-arrows>
+    <v-slide-group class="pt-4 custom-arrow-positions" show-arrows>
       <MediaItem
         v-for="(track, idx) in props.tracks"
         :key="track.id"
@@ -26,20 +26,3 @@ const props = defineProps<{
     </v-slide-group>
   </div>
 </template>
-
-<style>
-.custom-arrow-positions {
-  position: relative;
-}
-
-.custom-arrow-positions .v-slide-group__prev {
-  position: absolute;
-  top: 0px;
-  right: 4rem;
-}
-.custom-arrow-positions .v-slide-group__next {
-  position: absolute;
-  top: 0px;
-  right: 0;
-}
-</style>
