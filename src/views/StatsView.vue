@@ -7,16 +7,14 @@ import YourTopArtists from "@/components/stats/YourTopArtists.vue";
 import MediaItemSkeleton from "@/components/stats/MediaItemSkeleton.vue";
 import DateToggleButton from "@/components/DateToggleButton.vue";
 import type { TimeRange } from "@/model/TimeRange";
+import { onMounted } from "vue";
 
 const userStore = useUserStore();
 
-if (userStore.topArtists.items.length === 0) {
-  userStore.getTopTracks();
-}
-
-if (userStore.topTracks.items.length === 0) {
+onMounted(() => {
   userStore.getTopArtists();
-}
+  userStore.getTopTracks();
+});
 
 const onTimeRangeChange = (timeRange: TimeRange) => {
   if (timeRange.value != userStore.currentTimeRange) {
@@ -36,7 +34,7 @@ const onTimeRangeChange = (timeRange: TimeRange) => {
 
     <div class="mt-10">
       <YourTopArtists
-        v-if="userStore.topArtists.items.length !== 0"
+        v-if="userStore.topArtists.loading === false"
         :artists="userStore.topArtists.items"
       />
       <MediaItemSkeleton title="Your Top Artists" v-else />
@@ -44,7 +42,7 @@ const onTimeRangeChange = (timeRange: TimeRange) => {
 
     <div class="mt-10">
       <YourTopTracks
-        v-if="userStore.topTracks.items.length !== 0"
+        v-if="userStore.topTracks.loading === false"
         :tracks="userStore.topTracks.items"
       />
       <MediaItemSkeleton title="Your Top Tracks" v-else />
@@ -52,7 +50,10 @@ const onTimeRangeChange = (timeRange: TimeRange) => {
 
     <div class="mt-10 mb-10">
       <YourTaste
-        v-if="userStore.topArtists.items.length !== 0"
+        v-if="
+          userStore.topArtists.loading === false &&
+          userStore.topArtists.parsingGenres === false
+        "
         :genres="userStore.topArtists.genres"
       />
       <YourTastePlaceholder v-else />

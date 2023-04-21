@@ -18,15 +18,20 @@ export const useUserStore = defineStore("user", () => {
   const currentTimeRange = ref(TIME_RANGES[0].value)
 
   const topArtists = reactive({
+    loading: true,
+    parsingGenres: true,
     items: <TopArtist[]>[],
     genres: <TopGenres[]>[],
   })
 
   const topTracks = reactive({
+    loading: true,
     items: <TopTrack[]>[],
   })
 
   const getTopArtists = async () => {
+    topArtists.loading = true
+    topArtists.parsingGenres = true
     try {
       const response = await userEndpoints.get(`/me/top/artists?time_range=${currentTimeRange.value}&limit=50`);
       if (topArtists.items.length != 0) {
@@ -38,10 +43,14 @@ export const useUserStore = defineStore("user", () => {
       console.log(`[useUserStore >> getTopArtists] Top artists fetched:`, response.data)
     } catch (e) {
       console.error(e);
+      topArtists.parsingGenres = false
+    } finally {
+      topArtists.loading = false
     }
   }
 
   const getTopTracks = async () => {
+    topTracks.loading = true
     try {
       const response = await userEndpoints.get(`/me/top/tracks?time_range=${currentTimeRange.value}&limit=50`);
       if (topTracks.items.length != 0) {
@@ -51,6 +60,8 @@ export const useUserStore = defineStore("user", () => {
       console.log(`[useUserStore >> getTopTracks] Top tracks fetched:`, response.data)
     } catch (e) {
       console.error(e);
+    } finally {
+      topTracks.loading = false
     }
   }
 
@@ -62,6 +73,7 @@ export const useUserStore = defineStore("user", () => {
     }, {} as Record<string, number>)
 
     topArtists.genres.push(...Object.entries(countedGenres).sort((a, b) => b[1] - a[1]))
+    topArtists.parsingGenres = false
   }
 
   const changeTimeRange = (timeRange: TimeRange) => {
