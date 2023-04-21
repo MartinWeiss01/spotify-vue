@@ -23,7 +23,19 @@ const router = createRouter({
       name: 'stats',
       component: StatsViewVue,
       meta: { requiresAuth: true }
-    }
+    },
+    {
+      path: '/recently-played',
+      name: 'recentlyplayed',
+      component: StatsViewVue,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/deduplicator',
+      name: 'deduplicator',
+      component: StatsViewVue,
+      meta: { requiresAuth: true }
+    },
   ]
 })
 
