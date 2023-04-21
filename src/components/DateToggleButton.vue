@@ -19,7 +19,7 @@ const emit = defineEmits({
         :key="timeRange.value"
         :value="timeRange.value"
         @click="emit('updateTimeRange', timeRange)"
-        class="text-body-2 font-weight-bold mr-1 px-10"
+        class="bg-grey-darken-4 text-body-2 font-weight-bold px-10"
         selected-class="bg-spotify"
       >
         {{ timeRange.label }}
