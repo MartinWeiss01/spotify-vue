@@ -1,44 +1,28 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/user";
-import {ref} from "vue"
-
-
-
+import { TimeRange } from "@/model/TimeRange";
 
 const props = defineProps<{
-  time_ranges:{value:string,label:string}[]
-  
-}>()
+  currentTimeRange: string;
+  time_ranges: TimeRange[];
+}>();
+
 const emit = defineEmits({
-  getTimeRangeIndex: (timeRangeIndex: number) => true
-})
-
-function getTimeRangeIndex(timeRangeIndexIndex:number){
-  
-  
- 
-  emit('getTimeRangeIndex',timeRangeIndexIndex)
-}
-var toggle= ref(0)
+  updateTimeRange: (timeRange: TimeRange) => true,
+});
 </script>
+
 <template>
-  
-
-    <v-row justify="center">
-      <v-btn-toggle
-        v-model = "toggle"
-        
-        mandatory
-        
+  <v-row justify="center">
+    <v-btn-toggle v-model="props.currentTimeRange" mandatory>
+      <v-btn
+        v-for="timeRange in props.time_ranges"
+        :key="timeRange.value"
+        :value="timeRange"
+        @click="emit('updateTimeRange', timeRange)"
+        class="text-body-2 font-weight-bold mr-1 px-10"
       >
-        <v-btn v-for="time_range in time_ranges" @click="getTimeRangeIndex(toggle)">
-          {{time_range.label}}
-        </v-btn>
-
-        <!-- is kinda broken i have no idea how to fix it -->
-
-        
-      </v-btn-toggle>
-    </v-row>
-  
+        {{ timeRange.label }}
+      </v-btn>
+    </v-btn-toggle>
+  </v-row>
 </template>
