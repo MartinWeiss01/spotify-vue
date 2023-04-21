@@ -30,7 +30,9 @@ const user = reactive(authStore.user);
             class="rounded-xl"
             :src="user?.image || 'https://placehold.co/500x500?text=UU'"
           ></v-img>
-          <p class="text-grey-darken-1 font-weight-bold mr-5">{{ user?.name }}</p>
+          <p class="text-grey-darken-1 font-weight-bold mr-5">
+            {{ user?.name }}
+          </p>
         </div>
         <v-btn
           depressed
