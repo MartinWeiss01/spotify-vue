@@ -26,10 +26,16 @@ export const useUserStore = defineStore("user", () => {
 
   const getTopArtists = async () => {
     try {
+      
       const response = await userEndpoints.get(`/me/top/artists?time_range=${currentTimeRange.value}&limit=50`);
+      if(topArtists.items.length!= 0){
+        topArtists.items = [] 
+        topArtists.genres=[]
+      }
       topArtists.items.push(...response.data.items)
       parseUserTaste()
       console.log(`[useUserStore >> getTopArtists] Top artists fetched:`, response.data)
+      console.log(currentTimeRange.value )
     } catch (e) {
       console.error(e);
     }
@@ -38,6 +44,9 @@ export const useUserStore = defineStore("user", () => {
   const getTopTracks = async () => {
     try {
       const response = await userEndpoints.get(`/me/top/tracks?time_range=${currentTimeRange.value}&limit=50`);
+      if(topTracks.items.length != 0){
+        topTracks.items = [] 
+      }
       topTracks.items.push(...response.data.items)
       console.log(`[useUserStore >> getTopTracks] Top tracks fetched:`, response.data)
     } catch (e) {
@@ -51,8 +60,11 @@ export const useUserStore = defineStore("user", () => {
       acc[el] = (acc[el] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
+    
     topArtists.genres.push(...Object.entries(countedGenres).sort((a, b) => b[1] - a[1]))
   }
+
+  
 
   return { TIME_RANGES, currentTimeRange, topArtists, topTracks, getTopArtists, getTopTracks }
 })
