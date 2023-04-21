@@ -3,17 +3,19 @@ import { defineStore } from "pinia";
 import { reactive } from "vue";
 import type { TopTrack } from "@/model/TopTrack";
 import type { TopArtist } from "@/model/TopArtist";
+import type { TimeRange } from "@/model/TimeRange"
+import { ref } from "vue";
 
 type TopGenres = [string, number]
 
 export const useUserStore = defineStore("user", () => {
-  const TIME_RANGES = [
+  const TIME_RANGES: TimeRange[] = [
     { value: "short_term", label: "4 weeks" },
     { value: "medium_term", label: "6 months" },
     { value: "long_term", label: "All time" },
   ]
 
-  const currentTimeRange = reactive(TIME_RANGES[0])
+  const currentTimeRange = ref(TIME_RANGES[0].value)
 
   const topArtists = reactive({
     items: <TopArtist[]>[],
@@ -34,7 +36,6 @@ export const useUserStore = defineStore("user", () => {
       topArtists.items.push(...response.data.items)
       parseUserTaste()
       console.log(`[useUserStore >> getTopArtists] Top artists fetched:`, response.data)
-      console.log(currentTimeRange.value)
     } catch (e) {
       console.error(e);
     }
@@ -63,5 +64,11 @@ export const useUserStore = defineStore("user", () => {
     topArtists.genres.push(...Object.entries(countedGenres).sort((a, b) => b[1] - a[1]))
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, getTopArtists, getTopTracks }
+  const changeTimeRange = (timeRange: TimeRange) => {
+    currentTimeRange.value = timeRange.value
+    getTopArtists()
+    getTopTracks()
+  }
+
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, getTopArtists, getTopTracks, changeTimeRange }
 })
