@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginViewVue from '@/views/LoginView.vue'
 import AuthCallbackViewVue from '@/views/AuthCallbackView.vue'
 import StatsViewVue from '@/views/StatsView.vue'
+import RecentlyPlayedViewVue from '@/views/RecentlyPlayedView.vue'
+import PlaylistDeduplicatorViewVue from '@/views/PlaylistDeduplicatorView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -27,13 +29,13 @@ const router = createRouter({
     {
       path: '/recently-played',
       name: 'recentlyplayed',
-      component: StatsViewVue,
+      component: RecentlyPlayedViewVue,
       meta: { requiresAuth: true }
     },
     {
       path: '/deduplicator',
       name: 'deduplicator',
-      component: StatsViewVue,
+      component: PlaylistDeduplicatorViewVue,
       meta: { requiresAuth: true }
     },
   ]
