@@ -1,4 +1,4 @@
-export interface RecentlyPlayed {
+export interface RecentlyPlayedEndpoint {
   items: RecentlyPlayedItem[];
   next: string;
   cursors: Cursors;
