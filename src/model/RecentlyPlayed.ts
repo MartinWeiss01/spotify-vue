@@ -1,104 +1,106 @@
+export interface RecentlyPlayedEndpoint {
+  items: RecentlyPlayedItem[];
+  next: string;
+  cursors: Cursors;
+  limit: number;
+  href: string;
+}
+
 export interface Cursors {
-    after: string;
-    before: string;
-  }
-  
-export interface ExternalUrl {
-    spotify: string;
-  }
-  
-export interface ExternalIds {
-    isrc: string;
-    ean: string;
-    upc: string;
-  }
-  
-export interface Image {
-    url: string;
-    height: number;
-    width: number;
-  }
-  
-export interface Artist {
-    external_urls: ExternalUrl;
-    href: string;
-    id: string;
-    name: string;
-    type: string;
-    uri: string;
-  }
-  
-export interface Album {
-    album_type: string;
-    total_tracks: number;
-    available_markets: string[];
-    external_urls: ExternalUrl;
-    href: string;
-    id: string;
-    images: Image[];
-    name: string;
-    release_date: string;
-    release_date_precision: string;
-    restrictions: {
-      reason: string;
-    };
-    type: string;
-    uri: string;
-    copyrights: {
-      text: string;
-      type: string;
-    }[];
-    external_ids: ExternalIds;
-    genres: string[];
-    label: string;
-    popularity: number;
-    album_group: string;
-    artists: Artist[];
-  }
-  
+  after: string;
+  before: string;
+}
+
+export interface RecentlyPlayedItem {
+  track: Track;
+  playedAt: Date;
+  context: Context | null;
+}
+
+export interface Context {
+  type: ContextType;
+  externalUrls: ExternalUrls;
+  href: string;
+  uri: string;
+}
+
+export interface ExternalUrls {
+  spotify: string;
+}
+
+export enum ContextType {
+  Album = "album",
+  Artist = "artist",
+  Playlist = "playlist",
+}
+
 export interface Track {
-    album: Album;
-    artists: Artist[];
-    available_markets: string[];
-    disc_number: number;
-    duration_ms: number;
-    explicit: boolean;
-    external_ids: ExternalIds;
-    external_urls: ExternalUrl;
-    href: string;
-    id: string;
-    is_playable: boolean;
-    linked_from: any;
-    restrictions: {
-      reason: string;
-    };
-    name: string;
-    popularity: number;
-    preview_url: string;
-    track_number: number;
-    type: string;
-    uri: string;
-    is_local: boolean;
-  }
-  
-  export interface Context {
-    type: string;
-    href: string;
-    external_urls: ExternalUrl;
-    uri: string;
-  }
-  
-  export interface Item {
-    track: Track;
-    played_at: string;
-    context: Context;
-  }
-  
-  export  interface ApiResponse {
-    href: string;
-    limit: number;
-    next: string;
-    cursors: Cursors;
-    total: number;
-    items: Item[];
-  }
+  album: Album;
+  artists: Artist[];
+  availableMarkets: string[];
+  discNumber: number;
+  durationMS: number;
+  explicit: boolean;
+  externalIDS: ExternalIDS;
+  externalUrls: ExternalUrls;
+  href: string;
+  id: string;
+  isLocal: boolean;
+  name: string;
+  popularity: number;
+  previewURL: string;
+  trackNumber: number;
+  type: TrackType;
+  uri: string;
+}
+
+export interface Album {
+  albumGroup: AlbumGroupEnum;
+  albumType: AlbumGroupEnum;
+  artists: Artist[];
+  availableMarkets: string[];
+  externalUrls: ExternalUrls;
+  href: string;
+  id: string;
+  images: Image[];
+  name: string;
+  releaseDate: string;
+  releaseDatePrecision: ReleaseDatePrecision;
+  totalTracks: number;
+  type: ContextType;
+  uri: string;
+}
+
+export enum AlbumGroupEnum {
+  Album = "album",
+  Compilation = "compilation",
+  Single = "single",
+}
+
+export interface Artist {
+  externalUrls: ExternalUrls;
+  href: string;
+  id: string;
+  name: string;
+  type: ContextType;
+  uri: string;
+}
+
+export interface Image {
+  height: number;
+  url: string;
+  width: number;
+}
+
+export enum ReleaseDatePrecision {
+  Day = "day",
+  Year = "year",
+}
+
+export interface ExternalIDS {
+  isrc: string;
+}
+
+export enum TrackType {
+  Track = "track",
+}

@@ -13,6 +13,7 @@ export default createVuetify({
           secondary: '#191414',
           background: '#1a1a1a',
           "on-primary": '#000000',
+          spotify: '#1DB954',
         }
       }
     }
