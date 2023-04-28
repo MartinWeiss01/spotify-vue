@@ -6,6 +6,7 @@ import type { TopArtist } from "@/model/TopArtist";
 import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import type { TimeRange } from "@/model/TimeRange"
 import { ref } from "vue";
+import type { UserPlaylistsEndpoint,UserPlaylistItem } from "@/model/UserPlaylists";
 
 type TopGenres = [string, number]
 
@@ -33,6 +34,20 @@ export const useUserStore = defineStore("user", () => {
   const recentlyPlayed = reactive({
     items: <RecentlyPlayedItem[]>[],
   })
+
+  const playlists = reactive({
+    loading:false,
+    playlist:<UserPlaylistsEndpoint>{}
+    
+  })
+  var selectedPlaylists = reactive(
+    {
+      firstPlaylist:<UserPlaylistItem>{},
+      firstPlaylistReady:false,
+      secondPlaylist:<UserPlaylistItem>{},
+      secondPlaylistReady:false
+    }
+  )
 
   const getTopArtists = async () => {
     topArtists.loading = true
@@ -99,6 +114,22 @@ export const useUserStore = defineStore("user", () => {
     getTopArtists()
     getTopTracks()
   }
+  const getPlaylists =  async ()=>{
+    playlists.loading = true
+      try{
+        console.log(playlists.playlist)
+        console.log("Fetching playlists")
+        const response = await userEndpoints.get("/me/playlists?limit=50")
+        
+        playlists.playlist = {...response.data}
+        console.log("Playlist")
+        console.log(playlists.playlist)
+      }catch(e){
+        console.error(e)
+      }finally{
+        playlists.loading = false
+      }
+  }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, recentlyPlayed, getTopArtists, getTopTracks, changeTimeRange, getRecentlyPlayed }
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists,selectedPlaylists, getTopArtists, getTopTracks, changeTimeRange,getPlaylists }
 })

@@ -36,8 +36,8 @@ export interface Image {
 }
 
 export interface Owner {
-  displayName: string;
-  externalUrls: ExternalUrls;
+  display_name: string;
+  external_urls: ExternalUrls;
   href: string;
   id: string;
   type: string;
@@ -48,3 +48,4 @@ export interface Tracks {
   href: string;
   total: number;
 }
+
