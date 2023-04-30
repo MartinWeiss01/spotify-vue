@@ -4,6 +4,7 @@ import { reactive } from "vue";
 import type { TopTrack } from "@/model/TopTrack";
 import type { TopArtist } from "@/model/TopArtist";
 import type { TimeRange } from "@/model/TimeRange"
+import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed"
 import { ref } from "vue";
 
 type TopGenres = [string, number]
@@ -27,6 +28,11 @@ export const useUserStore = defineStore("user", () => {
   const topTracks = reactive({
     loading: true,
     items: <TopTrack[]>[],
+  })
+
+  const recentlyPlayed = reactive({
+    loading: true,
+    items: <RecentlyPlayedItem[]>[],
   })
 
   const getTopArtists = async () => {
@@ -65,6 +71,22 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  const getRecentlyPlayed = async () => {
+    recentlyPlayed.loading = true
+    try {
+      const response = await userEndpoints.get(`/me/player/recently-played?limit=50`);
+      if (recentlyPlayed.items.length != 0) {
+        recentlyPlayed.items = []
+      }
+      recentlyPlayed.items.push(...response.data.items)
+      console.log(`[useUserStore >> getRecentlyPlayed] Recently played tracks fetched:`, response.data)
+    } catch (e) {
+      console.error(e);
+    } finally {
+      recentlyPlayed.loading = false
+    }
+  }
+
   const parseUserTaste = async () => {
     const genres = topArtists.items.flatMap(el => el.genres)
     const countedGenres = genres.reduce((acc, el) => {
@@ -82,5 +104,5 @@ export const useUserStore = defineStore("user", () => {
     getTopTracks()
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, getTopArtists, getTopTracks, changeTimeRange }
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, recentlyPlayed, getRecentlyPlayed, getTopArtists, getTopTracks, changeTimeRange }
 })
