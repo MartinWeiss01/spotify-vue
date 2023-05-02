@@ -13,15 +13,13 @@ onMounted(() =>{
   userStore.getRecentlyPlayed();
 })
 
-console.log(userStore.recentlyPlayed.items[1].track.name)
-
-
 
 
 
 
 </script>
 
+  
 
 <template>
   <div class="pa-4">
@@ -31,8 +29,9 @@ console.log(userStore.recentlyPlayed.items[1].track.name)
   <div class="mt-10">
     <ul>
     <li v-for="(track, index) in userStore.recentlyPlayed.items" :key="index">
-      {{ track.track.name }} by {{ track.track.artists[0].name }}
+      {{ track.track.name }} by {{ track.track.artists[0].name }} 
     </li>
   </ul>
   </div>
+  
 </template>
