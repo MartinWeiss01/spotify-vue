@@ -13,7 +13,7 @@ export interface Cursors {
 
 export interface RecentlyPlayedItem {
   track: Track;
-  playedAt: Date;
+  played_at: Date;
   context: Context | null;
 }
 
