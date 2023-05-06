@@ -134,5 +134,29 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists }
+  const getPlaylistTracks = async (playlistId: string) => {
+    let tracks = []
+    let nextURL = `/playlists/${playlistId}/tracks?limit=50`
+
+    let sleepCounter = 0
+    const sleepTime = 1286
+
+    try {
+      while (nextURL) {
+        if (sleepCounter !== 0 && sleepCounter % 5 === 0) {
+          await new Promise(resolve => setTimeout(resolve, sleepTime))
+        }
+        const response = await userEndpoints.get(nextURL)
+        tracks.push(...response.data.items)
+        nextURL = response.data.next
+        sleepCounter++
+      }
+    } catch (e) {
+      console.error(e)
+    }
+
+    return tracks
+  }
+
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
 })
