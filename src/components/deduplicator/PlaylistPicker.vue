@@ -26,7 +26,6 @@ var chosenPlaylist = ref<UserPlaylistItem>();
     item-title="name"
     return-object
     @update:model-value="$emit('select-update', chosenPlaylist)"
-    persistent-placeholder=""
     variant="solo"
   ></v-select>
 </template>

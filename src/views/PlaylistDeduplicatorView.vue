@@ -82,6 +82,23 @@ const onFindingDuplicates = async () => {
   currentStepMessage.value = "Done!";
   progressStep.value = 100;
 };
+
+const saveChanges = () => {
+  console.log("Saving changes...");
+  duplicates.value.forEach(duplicate => {
+    if (duplicate.track1Delete) {
+      console.log(
+        `Deleting ${duplicate.track1.track.name} from playlist ${userStore.selectedPlaylists.firstPlaylist.name}`
+      );
+    }
+    if (duplicate.track2Delete) {
+      console.log(
+        `Deleting ${duplicate.track2.track.name} from playlist ${userStore.selectedPlaylists.secondPlaylist.name}`
+      );
+    }
+  });
+  processing.value = false;
+};
 </script>
 <template>
   <div class="pa-4 d-flex justify-center flex-column">
@@ -169,13 +186,17 @@ const onFindingDuplicates = async () => {
           processing === true && progressStep === 100 && duplicates.length === 0
         "
       >
-        <v-row justify="center">
+        <v-row justify="center" class="pb-6">
           <h1>No Duplicates Found</h1>
         </v-row>
       </v-col>
       <!-- Loop through duplications on rows  -->
-      <v-col v-for="(duplication, index) in duplicates" :key="index">
-        <v-col>
+      <v-row
+        v-for="(duplication, index) in duplicates"
+        :key="index"
+        class="mb-4"
+      >
+        <v-col cols="12" md="6">
           <v-row>
             <span>
               Playlist: {{ userStore.selectedPlaylists.firstPlaylist.name }}
@@ -205,7 +226,6 @@ const onFindingDuplicates = async () => {
                     duplication.track1.track.artists
                       .map(artist => artist.name)
                       .join(", ")
-                      .slice(0, -1)
                   }}
                 </small>
               </v-row>
@@ -225,7 +245,7 @@ const onFindingDuplicates = async () => {
           </v-row>
         </v-col>
 
-        <v-col>
+        <v-col cols="12" md="6">
           <v-row>
             <span>
               Playlist: {{ userStore.selectedPlaylists.secondPlaylist.name }}
@@ -255,7 +275,6 @@ const onFindingDuplicates = async () => {
                     duplication.track2.track.artists
                       .map(artist => artist.name)
                       .join(", ")
-                      .slice(0, -1)
                   }}
                 </small>
               </v-row>
@@ -273,7 +292,24 @@ const onFindingDuplicates = async () => {
             </v-col>
           </v-row>
         </v-col>
-      </v-col>
+        <v-divider class="my-3"></v-divider>
+      </v-row>
     </v-container>
+
+    <v-row
+      v-if="
+        processing === true && progressStep === 100 && duplicates.length > 0
+      "
+      justify="center"
+    >
+      <v-btn
+        @click="saveChanges"
+        class="text-none font-weight-semibold mb-6"
+        color="primary"
+        elevation="4"
+      >
+        Apply
+      </v-btn>
+    </v-row>
   </div>
 </template>
