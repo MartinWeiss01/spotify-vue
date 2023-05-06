@@ -1,4 +1,4 @@
-import { Track } from "@/model/PlaylistTracks";
+import type { Track } from "@/model/PlaylistTracks";
 
 export function getTrackSimilarityLevel(track1: Track, track2: Track): number {
   if (track1.id === null) return 0;
