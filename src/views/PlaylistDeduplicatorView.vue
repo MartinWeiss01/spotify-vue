@@ -6,7 +6,10 @@ import type { PlaylistTrack } from "@/model/PlaylistTracks";
 import type { DuplicationItems } from "@/model/Deduplicator";
 import { useUserStore } from "@/stores/user";
 import { onMounted, ref } from "vue";
-import { getTrackSimilarityLevel } from "@/utils/playlist";
+import {
+  getSimilarityLevelDescription,
+  getTrackSimilarityLevel,
+} from "@/utils/playlist";
 
 const DEFAULT_MIN_SIMILARITY_LEVEL = 3;
 
@@ -192,109 +195,125 @@ const saveChanges = () => {
         </v-row>
       </v-col>
       <!-- Loop through duplications on rows  -->
-      <v-row
+      <v-col
         v-for="(duplication, index) in duplicates"
         :key="index"
         class="mb-4"
       >
-        <v-col cols="12" md="6">
-          <v-row>
-            <span>
-              Playlist: {{ userStore.selectedPlaylists.firstPlaylist.name }}
-            </span>
-          </v-row>
+        <v-row justify="center">
+          <span
+            >Similarity Level: {{ duplication.similarityLevel }}/4
+            <small
+              >({{
+                getSimilarityLevelDescription(duplication.similarityLevel)
+              }})</small
+            ></span
+          >
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-row>
+              <span>
+                Playlist: {{ userStore.selectedPlaylists.firstPlaylist.name }}
+              </span>
+            </v-row>
 
-          <v-row>
-            <v-col>
-              <v-img
-                :width="60"
-                :aspect-ratio="1"
-                :src="duplication.track1.track.album.images[0].url"
-                cover
-              ></v-img>
-            </v-col>
+            <v-row>
+              <v-col>
+                <v-img
+                  :width="60"
+                  :aspect-ratio="1"
+                  :src="duplication.track1.track.album.images[0].url"
+                  cover
+                ></v-img>
+              </v-col>
 
-            <v-col>
-              <v-row>
-                <h4>{{ duplication.track1.track.name }}</h4>
-              </v-row>
-              <v-row>
-                <small>{{ duplication.track1.track.album.name }}</small>
-              </v-row>
-              <v-row>
-                <small>
-                  {{
-                    duplication.track1.track.artists
-                      .map(artist => artist.name)
-                      .join(", ")
-                  }}
-                </small>
-              </v-row>
-            </v-col>
+              <v-col>
+                <v-row>
+                  <h4>{{ duplication.track1.track.name }}</h4>
+                </v-row>
+                <v-row>
+                  <small>{{ duplication.track1.track.album.name }}</small>
+                </v-row>
+                <v-row>
+                  <small>
+                    {{
+                      duplication.track1.track.artists
+                        .map(artist => artist.name)
+                        .join(", ")
+                    }}
+                  </small>
+                </v-row>
+              </v-col>
 
-            <v-col>
-              <v-btn-toggle
-                v-model="duplication.track1Delete"
-                divided
-                elevation="4"
-                mandatory
-              >
-                <v-btn :value="false" color="green" size="small"> Keep </v-btn>
-                <v-btn :value="true" color="red" size="small"> Delete </v-btn>
-              </v-btn-toggle>
-            </v-col>
-          </v-row>
-        </v-col>
+              <v-col>
+                <v-btn-toggle
+                  v-model="duplication.track1Delete"
+                  divided
+                  elevation="4"
+                  mandatory
+                >
+                  <v-btn :value="false" color="green" size="small">
+                    Keep
+                  </v-btn>
+                  <v-btn :value="true" color="red" size="small"> Delete </v-btn>
+                </v-btn-toggle>
+              </v-col>
+            </v-row>
+          </v-col>
 
-        <v-col cols="12" md="6">
-          <v-row>
-            <span>
-              Playlist: {{ userStore.selectedPlaylists.secondPlaylist.name }}
-            </span>
-          </v-row>
+          <v-col cols="12" md="6">
+            <v-row>
+              <span>
+                Playlist: {{ userStore.selectedPlaylists.secondPlaylist.name }}
+              </span>
+            </v-row>
 
-          <v-row>
-            <v-col>
-              <v-img
-                :width="60"
-                :aspect-ratio="1"
-                :src="duplication.track2.track.album.images[0].url"
-                cover
-              ></v-img>
-            </v-col>
+            <v-row>
+              <v-col>
+                <v-img
+                  :width="60"
+                  :aspect-ratio="1"
+                  :src="duplication.track2.track.album.images[0].url"
+                  cover
+                ></v-img>
+              </v-col>
 
-            <v-col>
-              <v-row>
-                <h4>{{ duplication.track2.track.name }}</h4>
-              </v-row>
-              <v-row>
-                <small>{{ duplication.track2.track.album.name }}</small>
-              </v-row>
-              <v-row>
-                <small>
-                  {{
-                    duplication.track2.track.artists
-                      .map(artist => artist.name)
-                      .join(", ")
-                  }}
-                </small>
-              </v-row>
-            </v-col>
+              <v-col>
+                <v-row>
+                  <h4>{{ duplication.track2.track.name }}</h4>
+                </v-row>
+                <v-row>
+                  <small>{{ duplication.track2.track.album.name }}</small>
+                </v-row>
+                <v-row>
+                  <small>
+                    {{
+                      duplication.track2.track.artists
+                        .map(artist => artist.name)
+                        .join(", ")
+                    }}
+                  </small>
+                </v-row>
+              </v-col>
 
-            <v-col>
-              <v-btn-toggle
-                v-model="duplication.track2Delete"
-                divided
-                elevation="4"
-              >
-                <v-btn :value="false" color="green" size="small"> Keep </v-btn>
-                <v-btn :value="true" color="red" size="small"> Delete </v-btn>
-              </v-btn-toggle>
-            </v-col>
-          </v-row>
-        </v-col>
+              <v-col>
+                <v-btn-toggle
+                  v-model="duplication.track2Delete"
+                  divided
+                  elevation="4"
+                >
+                  <v-btn :value="false" color="green" size="small">
+                    Keep
+                  </v-btn>
+                  <v-btn :value="true" color="red" size="small"> Delete </v-btn>
+                </v-btn-toggle>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
         <v-divider class="my-3"></v-divider>
-      </v-row>
+      </v-col>
     </v-container>
 
     <v-row
