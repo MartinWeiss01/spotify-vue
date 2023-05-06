@@ -59,6 +59,7 @@ function comparePlaylists(
 }
 
 const onFindingDuplicates = async () => {
+  duplicates.value = [];
   processing.value = true;
 
   let firstPlaylistItems: PlaylistTrack[] = [];
