@@ -11,10 +11,10 @@ onMounted(() => {
 const formatDate = (timestamp: Date) => {
   const date = new Date(timestamp);
   const year = date.getFullYear();
-  const month = date.getMonth() + 1;
+  const month = date.toLocaleString("en-US", { month: "long" });
   const day = date.getDate();
 
-  return `${month}-${day}-${year}`;
+  return `${month} ${day}, ${year}`;
 };
 
 const groupedTracks = computed(() => {
@@ -33,32 +33,66 @@ const groupedTracks = computed(() => {
   return groups;
 });
 
+const getTimeAgoString = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.round((now.valueOf() - date.valueOf()) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+
+  if (seconds < 60) {
+    return `${seconds} seconds ago`;
+  } else if (minutes < 60) {
+    return `${minutes} minutes ago`;
+  } else if (hours < 24) {
+    return `${hours} hours ago`;
+  } else {
+    return `${days} days ago`;
+  }
+};
+
 //<v-card-title>{{ track.track.name }}</v-card-title>
 //<v-card-subtitle>{{ track.track.artists[0].name }}
 </script>
 
 <template>
-  <div class="mt-10">
-    <h1>Your recently played songs:</h1>
-    <br />
+  <div class="pa-4 d-flex justify-center flex-column">
+    <h1>Recently Played</h1>
+
     <div v-for="(group, date) in groupedTracks" :key="date">
       <h2>{{ date }}</h2>
+      <v-divider class="my-3"></v-divider>
 
-      <div>
-        <div></div>
-        <v-col v-for="(track, index) in group" :key="index" cols="10">
-          <v-row>
+      <div
+        v-for="(track, index) in group"
+        :key="index"
+        class="d-flex flex-column flex-sm-row justify-sm-space-between align-sm-center mb-2"
+      >
+        <div class="d-flex align-center">
+          <div>
             <v-img
-              class="album-image"
+              :width="60"
+              :aspect-ratio="1"
               :src="track.track.album.images[0].url"
-              height="50"
+              cover
             ></v-img>
-            <v-col>
-              <p class="track-name">{{ track.track.name }}</p>
-              <p class="artist-name">{{ track.track.artists[0].name }}</p>
-            </v-col>
-          </v-row>
-        </v-col>
+          </div>
+          <div class="d-flex flex-column ml-4">
+            <span class="track-name font-weight-bold">{{
+              track.track.name
+            }}</span>
+            <span class="artist-name">{{
+              track.track.artists.map(artist => artist.name).join(", ")
+            }}</span>
+          </div>
+        </div>
+
+        <div>
+          <span :title="track.played_at">{{
+            getTimeAgoString(track.played_at)
+          }}</span>
+        </div>
       </div>
     </div>
   </div>
