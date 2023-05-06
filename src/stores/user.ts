@@ -5,7 +5,6 @@ import type { TopTrack } from "@/model/TopTrack";
 import type { TopArtist } from "@/model/TopArtist";
 import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import type { TimeRange } from "@/model/TimeRange"
-import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed"
 import { ref } from "vue";
 import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
 
