@@ -7,6 +7,7 @@ import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import type { TimeRange } from "@/model/TimeRange"
 import { ref } from "vue";
 import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
+import { PlaylistTrack } from "@/model/PlaylistTracks";
 
 type TopGenres = [string, number]
 
@@ -134,7 +135,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  const getPlaylistTracks = async (playlistId: string) => {
+  const getPlaylistTracks = async (playlistId: string): Promise<PlaylistTrack[]> => {
     let tracks = []
     let nextURL = `/playlists/${playlistId}/tracks?limit=50`
 
@@ -150,6 +151,7 @@ export const useUserStore = defineStore("user", () => {
         tracks.push(...response.data.items)
         nextURL = response.data.next
         sleepCounter++
+        console.log(`[useUserStore >> getPlaylistTracks] Playlist tracks fetched:`, response.data)
       }
     } catch (e) {
       console.error(e)
