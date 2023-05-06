@@ -7,7 +7,7 @@ import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import type { TimeRange } from "@/model/TimeRange"
 import { ref } from "vue";
 import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
-import { PlaylistTrack } from "@/model/PlaylistTracks";
+import type { PlaylistTrack } from "@/model/PlaylistTracks";
 
 type TopGenres = [string, number]
 
