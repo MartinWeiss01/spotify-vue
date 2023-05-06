@@ -92,12 +92,12 @@ const saveChanges = () => {
   duplicates.value.forEach(duplicate => {
     if (duplicate.track1Delete) {
       console.log(
-        `Deleting ${duplicate.track1.track.name} from playlist ${userStore.selectedPlaylists.firstPlaylist.name}`
+        `Deleting ${duplicate.track1.track.name} (ID track: ${duplicate.track1.track.uri}) from playlist ${userStore.selectedPlaylists.firstPlaylist.name} (ID playlist: ${userStore.selectedPlaylists.firstPlaylist.id})`
       );
     }
     if (duplicate.track2Delete) {
       console.log(
-        `Deleting ${duplicate.track2.track.name} from playlist ${userStore.selectedPlaylists.secondPlaylist.name}`
+        `Deleting ${duplicate.track2.track.name} (ID track: ${duplicate.track2.track.uri}) from playlist ${userStore.selectedPlaylists.secondPlaylist.name} (ID playlist: ${userStore.selectedPlaylists.secondPlaylist.id})`
       );
     }
   });
