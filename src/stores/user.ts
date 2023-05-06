@@ -3,9 +3,11 @@ import { defineStore } from "pinia";
 import { reactive } from "vue";
 import type { TopTrack } from "@/model/TopTrack";
 import type { TopArtist } from "@/model/TopArtist";
+import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import type { TimeRange } from "@/model/TimeRange"
 import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed"
 import { ref } from "vue";
+import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
 
 type TopGenres = [string, number]
 
@@ -33,6 +35,18 @@ export const useUserStore = defineStore("user", () => {
   const recentlyPlayed = reactive({
     loading: true,
     items: <RecentlyPlayedItem[]>[],
+  })
+
+  const playlists = reactive({
+    loading: false,
+    playlist: <UserPlaylistsEndpoint>{}
+  })
+
+  var selectedPlaylists = reactive({
+    firstPlaylist: <UserPlaylistItem>{},
+    firstPlaylistReady: false,
+    secondPlaylist: <UserPlaylistItem>{},
+    secondPlaylistReady: false
   })
 
   const getTopArtists = async () => {
@@ -104,5 +118,22 @@ export const useUserStore = defineStore("user", () => {
     getTopTracks()
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, recentlyPlayed, getRecentlyPlayed, getTopArtists, getTopTracks, changeTimeRange }
+  const getPlaylists = async () => {
+    playlists.loading = true
+    try {
+      console.log(playlists.playlist)
+      console.log("Fetching playlists")
+      const response = await userEndpoints.get("/me/playlists?limit=50")
+
+      playlists.playlist = { ...response.data }
+      console.log("Playlist")
+      console.log(playlists.playlist)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      playlists.loading = false
+    }
+  }
+
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists }
 })
