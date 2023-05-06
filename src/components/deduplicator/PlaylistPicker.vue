@@ -20,15 +20,13 @@ var chosenPlaylist = ref<UserPlaylistItem>();
 <template>
   <!-- <v-btn @click="print"></v-btn> -->
   <v-select
-    density="compact"
+    label="Choose a Playlist"
     v-model="chosenPlaylist"
-    label="Select"
     :items="playlists.items"
     item-title="name"
     return-object
     @update:model-value="$emit('select-update', chosenPlaylist)"
-    single-line
-    placeholder="Choose a Playlist"
     persistent-placeholder=""
+    variant="solo"
   ></v-select>
 </template>
