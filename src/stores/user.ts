@@ -9,6 +9,7 @@ import { ref } from "vue";
 import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
 import type { PlaylistTrack } from "@/model/PlaylistTracks";
 
+
 type TopGenres = [string, number]
 
 export const useUserStore = defineStore("user", () => {
@@ -68,6 +69,19 @@ export const useUserStore = defineStore("user", () => {
       topArtists.loading = false
     }
   }
+  
+const deleteTracks = async(albumId:string,trackUris:string ) => {
+
+  
+  try {
+    
+    const response = await userEndpoints.delete(`https://api.spotify.com/v1/albums/${albumId}/${trackUris}`)
+    
+  }catch (e){
+    console.error(e)
+  }
+}
+  
 
   const getTopTracks = async () => {
     topTracks.loading = true
@@ -101,6 +115,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+
   const parseUserTaste = async () => {
     const genres = topArtists.items.flatMap(el => el.genres)
     const countedGenres = genres.reduce((acc, el) => {
@@ -111,6 +126,8 @@ export const useUserStore = defineStore("user", () => {
     topArtists.genres.push(...Object.entries(countedGenres).sort((a, b) => b[1] - a[1]))
     topArtists.parsingGenres = false
   }
+
+  
 
   const changeTimeRange = (timeRange: TimeRange) => {
     currentTimeRange.value = timeRange.value
@@ -160,5 +177,5 @@ export const useUserStore = defineStore("user", () => {
     return tracks
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists,deleteTracks , getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
 })
