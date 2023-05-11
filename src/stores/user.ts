@@ -8,9 +8,12 @@ import type { TimeRange } from "@/model/TimeRange"
 import { ref } from "vue";
 import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
 import type { PlaylistTrack } from "@/model/PlaylistTracks";
+import axios from 'axios'
+import { useAuthStore } from "./auth";
 
 
 type TopGenres = [string, number]
+
 
 export const useUserStore = defineStore("user", () => {
   const TIME_RANGES: TimeRange[] = [
@@ -70,17 +73,18 @@ export const useUserStore = defineStore("user", () => {
     }
   }
   
-const deleteTracks = async(albumId:string,trackUris:string ) => {
-
-  
-  try {
-    
-    const response = await userEndpoints.delete(`https://api.spotify.com/v1/albums/${albumId}/${trackUris}`)
-    
-  }catch (e){
-    console.error(e)
-  }
-}
+  const deleteTracks = async (playlistId: string, trackUris: { uri: string }[]) => {
+    try {
+      
+      const bodyData = {
+        uris: trackUris.map(track => track.uri)
+      };
+      const response = await userEndpoints.delete(`/playlists/${playlistId}/tracks`, {data: bodyData});
+      
+    } catch (e){
+      console.error(e)
+    }
+  };
   
 
   const getTopTracks = async () => {
