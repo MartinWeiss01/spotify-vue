@@ -97,7 +97,7 @@ const saveChanges = () => {
   duplicates.value.forEach(duplicate => {
     if (duplicate.track1Delete) {
       playlist1DeleteTracks.push({
-        uri: duplicate.track1.track.uri,
+        uri: duplicate.track2.track.uri,
       });
     }
     if (duplicate.track2Delete) {
@@ -105,42 +105,17 @@ const saveChanges = () => {
         uri: duplicate.track2.track.uri,
       });
     }
+
+
+    userStore.deleteTracks(userStore.selectedPlaylists.firstPlaylist.id,playlist1DeleteTracks)
+    userStore.deleteTracks(userStore.selectedPlaylists.secondPlaylist.id,playlist2DeleteTracks)
+    
   
-    const trackUris1 = playlist1DeleteTracks.map(track => track.uri).join(',');
-
-    userStore.deleteTracks(userStore.selectedPlaylists.firstPlaylist.id,trackUris1)
-
-  console.log("string:" + trackUris1);
-  console.log("----")
-  console.log("list1:" + JSON.stringify(playlist1DeleteTracks));
-  console.log("----")
-  console.log("list2:" + JSON.stringify(playlist2DeleteTracks));
-
- 
 
 
-
-
-  processing.value = false;
-
-
-
-
+  processing.value = false
       
-      /*
-      if (duplicate.track1Delete) {console.log(
-        `Deleting ${duplicate.track1.track.name} (ID track: ${duplicate.track1.track.uri}) from playlist ${userStore.selectedPlaylists.firstPlaylist.name} (ID playlist: ${userStore.selectedPlaylists.firstPlaylist.id})`
-      );
-
-      
-    }
-    if (duplicate.track2Delete) {
-      
-      console.log(
-        `Deleting ${duplicate.track2.track.name} (ID track: ${duplicate.track2.track.uri}) from playlist ${userStore.selectedPlaylists.secondPlaylist.name} (ID playlist: ${userStore.selectedPlaylists.secondPlaylist.id})`
-      );
-          
-    }*/
+     
   });
   
 };
