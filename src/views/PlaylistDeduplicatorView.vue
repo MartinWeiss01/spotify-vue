@@ -139,14 +139,24 @@ const saveChanges = async () => {
   );
 
   if (playlist1Deleted && playlist2Deleted) {
-    alert.value = {
-      title: "Success!",
-      description: `Changes saved successfully. The selected songs (${
-        playlist1DeleteTracks.length + playlist2DeleteTracks.length
-      }) have been removed from the playlists.`,
-      type: "success",
-      show: true,
-    };
+    let totalDeleted =
+      playlist1DeleteTracks.length + playlist2DeleteTracks.length;
+
+    if (totalDeleted === 0) {
+      alert.value = {
+        title: "Success",
+        description: `No changes were made to the playlists.`,
+        type: "info",
+        show: true,
+      };
+    } else {
+      alert.value = {
+        title: "Success!",
+        description: `Changes saved successfully. The selected songs (${totalDeleted}) have been removed from the playlists.`,
+        type: "success",
+        show: true,
+      };
+    }
   } else {
     alert.value = {
       title: "Something went wrong!",
@@ -169,6 +179,7 @@ const saveChanges = async () => {
           :type="alert.type"
           :title="alert.title"
           :text="alert.description"
+          variant="tonal"
         ></v-alert>
       </v-row>
     </v-container>
