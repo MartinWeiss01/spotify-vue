@@ -17,8 +17,23 @@ const userStore = useUserStore();
 
 onMounted(() => {
   userStore.getPlaylists();
-  
 });
+
+type Alert = {
+  title: string;
+  description: string;
+  type: "error" | "success" | "warning" | "info" | undefined;
+  show: boolean;
+};
+
+const DEFAULT_ALERT: Alert = {
+  title: "",
+  description: "",
+  type: "info",
+  show: false,
+};
+
+const alert = ref(DEFAULT_ALERT);
 
 const onFirstPlaylistSelect = (playlist: UserPlaylistItem) => {
   userStore.selectedPlaylists.firstPlaylist = playlist;
@@ -65,6 +80,8 @@ function comparePlaylists(
 const onFindingDuplicates = async () => {
   duplicates.value = [];
   processing.value = true;
+  alert.value = DEFAULT_ALERT;
+  progressStep.value = 0;
 
   let firstPlaylistItems: PlaylistTrack[] = [];
   currentStepMessage.value = "Fetching tracks from first playlist...";
@@ -86,42 +103,76 @@ const onFindingDuplicates = async () => {
 
   currentStepMessage.value = "Done!";
   progressStep.value = 100;
-  
 };
 
-const saveChanges = () => {
+type TrackURI = {
+  uri: string;
+};
 
+const saveChanges = async () => {
   console.log("Saving changes...");
-  const playlist1DeleteTracks: { uri: string }[] = [];
-  const playlist2DeleteTracks: { uri: string }[] = [];
+  const playlist1DeleteTracks: TrackURI[] = [];
+  const playlist2DeleteTracks: TrackURI[] = [];
+
   duplicates.value.forEach(duplicate => {
     if (duplicate.track1Delete) {
       playlist1DeleteTracks.push({
-        uri: duplicate.track2.track.uri,
+        uri: duplicate.track1.track.uri,
       });
     }
+
     if (duplicate.track2Delete) {
       playlist2DeleteTracks.push({
         uri: duplicate.track2.track.uri,
       });
     }
-
-
-    userStore.deleteTracks(userStore.selectedPlaylists.firstPlaylist.id,playlist1DeleteTracks)
-    userStore.deleteTracks(userStore.selectedPlaylists.secondPlaylist.id,playlist2DeleteTracks)
-    
-  
-
-
-  processing.value = false
-      
-     
   });
-  
+
+  const playlist1Deleted = await userStore.deleteTracks(
+    userStore.selectedPlaylists.firstPlaylist.id,
+    playlist1DeleteTracks
+  );
+
+  const playlist2Deleted = await userStore.deleteTracks(
+    userStore.selectedPlaylists.secondPlaylist.id,
+    playlist2DeleteTracks
+  );
+
+  if (playlist1Deleted && playlist2Deleted) {
+    alert.value = {
+      title: "Success!",
+      description: `Changes saved successfully. The selected songs (${
+        playlist1DeleteTracks.length + playlist2DeleteTracks.length
+      }) have been removed from the playlists.`,
+      type: "success",
+      show: true,
+    };
+  } else {
+    alert.value = {
+      title: "Something went wrong!",
+      description:
+        "There was a problem deleting the songs from the playlists. Please try again later.",
+      type: "error",
+      show: true,
+    };
+  }
+
+  processing.value = false;
 };
 </script>
 <template>
   <div class="pa-4 d-flex justify-center flex-column">
+    <v-container v-if="alert.show">
+      <v-row justify="center">
+        <v-alert
+          max-width="860"
+          :type="alert.type"
+          :title="alert.title"
+          :text="alert.description"
+        ></v-alert>
+      </v-row>
+    </v-container>
+
     <v-container>
       <v-row>
         <v-col>

@@ -72,20 +72,17 @@ export const useUserStore = defineStore("user", () => {
       topArtists.loading = false
     }
   }
-  
-  const deleteTracks = async (playlistId: string, trackUris: { uri: string }[]) => {
+
+  const deleteTracks = async (playlistId: string, trackUris: { uri: string }[]): Promise<Boolean> => {
     try {
-      
-      const bodyData = {
-        uris: trackUris.map(track => track.uri)
-      };
-      const response = await userEndpoints.delete(`/playlists/${playlistId}/tracks`, {data: bodyData});
-      
-    } catch (e){
+      const bodyData = { tracks: trackUris };
+      await userEndpoints.delete(`/playlists/${playlistId}/tracks`, { data: bodyData });
+      return true
+    } catch (e) {
       console.error(e)
+      return false
     }
   };
-  
 
   const getTopTracks = async () => {
     topTracks.loading = true
@@ -131,7 +128,7 @@ export const useUserStore = defineStore("user", () => {
     topArtists.parsingGenres = false
   }
 
-  
+
 
   const changeTimeRange = (timeRange: TimeRange) => {
     currentTimeRange.value = timeRange.value
@@ -181,5 +178,5 @@ export const useUserStore = defineStore("user", () => {
     return tracks
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists,deleteTracks , getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, deleteTracks, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
 })
