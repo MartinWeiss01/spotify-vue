@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PlaylistTrack } from "@/model/PlaylistTracks";
+import type { PlaylistTrack } from "@/model/PlaylistTracks";
 
 const props = defineProps<{
   playlistName: string;

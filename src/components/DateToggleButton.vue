@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { TimeRange } from "@/model/TimeRange";
-import { onMounted } from "vue";
+import type { TimeRange } from "@/model/TimeRange";
 
 const props = defineProps<{
   currentTimeRange: string;

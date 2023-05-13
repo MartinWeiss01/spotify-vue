@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
+import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import { useUserStore } from "@/stores/user";
 import { computed, onMounted } from "vue";
 

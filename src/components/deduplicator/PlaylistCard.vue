@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserPlaylistItem } from "@/model/UserPlaylists";
+import type { UserPlaylistItem } from "@/model/UserPlaylists";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();

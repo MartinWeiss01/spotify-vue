@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
+import type {
+  UserPlaylistsEndpoint,
+  UserPlaylistItem,
+} from "@/model/UserPlaylists";
 import { ref } from "vue";
 import { onMounted } from "vue";
 
