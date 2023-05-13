@@ -8,8 +8,12 @@ import type { TimeRange } from "@/model/TimeRange"
 import { ref } from "vue";
 import type { UserPlaylistsEndpoint, UserPlaylistItem } from "@/model/UserPlaylists";
 import type { PlaylistTrack } from "@/model/PlaylistTracks";
+import axios from 'axios'
+import { useAuthStore } from "./auth";
+
 
 type TopGenres = [string, number]
+
 
 export const useUserStore = defineStore("user", () => {
   const TIME_RANGES: TimeRange[] = [
@@ -69,6 +73,17 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  const deleteTracks = async (playlistId: string, trackUris: { uri: string }[]): Promise<Boolean> => {
+    try {
+      const bodyData = { tracks: trackUris };
+      await userEndpoints.delete(`/playlists/${playlistId}/tracks`, { data: bodyData });
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  };
+
   const getTopTracks = async () => {
     topTracks.loading = true
     try {
@@ -101,6 +116,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+
   const parseUserTaste = async () => {
     const genres = topArtists.items.flatMap(el => el.genres)
     const countedGenres = genres.reduce((acc, el) => {
@@ -111,6 +127,8 @@ export const useUserStore = defineStore("user", () => {
     topArtists.genres.push(...Object.entries(countedGenres).sort((a, b) => b[1] - a[1]))
     topArtists.parsingGenres = false
   }
+
+
 
   const changeTimeRange = (timeRange: TimeRange) => {
     currentTimeRange.value = timeRange.value
@@ -160,5 +178,5 @@ export const useUserStore = defineStore("user", () => {
     return tracks
   }
 
-  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
+  return { TIME_RANGES, currentTimeRange, topArtists, topTracks, playlists, selectedPlaylists, deleteTracks, getTopArtists, getTopTracks, recentlyPlayed, getRecentlyPlayed, changeTimeRange, getPlaylists, getPlaylistTracks }
 })

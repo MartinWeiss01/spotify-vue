@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import { useUserStore } from "@/stores/user";
 import { computed, onMounted } from "vue";
 
@@ -18,7 +19,7 @@ const formatDate = (timestamp: Date) => {
 };
 
 const groupedTracks = computed(() => {
-  const groups: { [date: string]: any[] } = {};
+  const groups: { [date: string]: RecentlyPlayedItem[] } = {};
 
   userStore.recentlyPlayed.items.forEach(track => {
     const date = formatDate(track.played_at);
@@ -33,8 +34,8 @@ const groupedTracks = computed(() => {
   return groups;
 });
 
-const getTimeAgoString = (dateString: string): string => {
-  const date = new Date(dateString);
+const getTimeAgoString = (timedate: Date): string => {
+  const date = new Date(timedate);
   const now = new Date();
   const seconds = Math.round((now.valueOf() - date.valueOf()) / 1000);
   const minutes = Math.round(seconds / 60);
@@ -51,16 +52,13 @@ const getTimeAgoString = (dateString: string): string => {
     return `${days} days ago`;
   }
 };
-
-//<v-card-title>{{ track.track.name }}</v-card-title>
-//<v-card-subtitle>{{ track.track.artists[0].name }}
 </script>
 
 <template>
   <div class="pa-4 d-flex justify-center flex-column">
     <h1>Recently Played</h1>
 
-    <div v-for="(group, date) in groupedTracks" :key="date">
+    <div v-for="(group, date) in groupedTracks" :key="date" class="mt-4">
       <h2>{{ date }}</h2>
       <v-divider class="my-3"></v-divider>
 
@@ -69,7 +67,7 @@ const getTimeAgoString = (dateString: string): string => {
         :key="index"
         class="d-flex flex-column flex-sm-row justify-sm-space-between align-sm-center mb-2"
       >
-        <div class="d-flex align-center">
+        <div class="d-flex align-sm-center">
           <div>
             <v-img
               :width="60"
@@ -79,19 +77,28 @@ const getTimeAgoString = (dateString: string): string => {
             ></v-img>
           </div>
           <div class="d-flex flex-column ml-4">
-            <span class="track-name font-weight-bold">{{
-              track.track.name
-            }}</span>
-            <span class="artist-name">{{
-              track.track.artists.map(artist => artist.name).join(", ")
-            }}</span>
+            <span class="track-name font-weight-bold">
+              {{ track.track.name }}
+            </span>
+            <span class="artist-name">
+              {{ track.track.artists.map(artist => artist.name).join(", ") }}
+            </span>
+            <small
+              :title="`${track.played_at.toLocaleString()} UTC`"
+              class="d-flex d-sm-none"
+            >
+              {{ getTimeAgoString(track.played_at) }}
+            </small>
           </div>
         </div>
 
         <div>
-          <span :title="track.played_at">{{
-            getTimeAgoString(track.played_at)
-          }}</span>
+          <span
+            :title="`${track.played_at.toLocaleString()} UTC`"
+            class="d-none d-sm-flex"
+          >
+            {{ getTimeAgoString(track.played_at) }}
+          </span>
         </div>
       </div>
     </div>
