@@ -75,8 +75,12 @@ export const useUserStore = defineStore("user", () => {
 
   const deleteTracks = async (playlistId: string, trackUris: { uri: string }[]): Promise<Boolean> => {
     try {
-      const bodyData = { tracks: trackUris };
-      await userEndpoints.delete(`/playlists/${playlistId}/tracks`, { data: bodyData });
+      let i = 0;
+      while (i < trackUris.length) {
+        const bodyData = { tracks: trackUris.slice(i, i + 100) };
+        await userEndpoints.delete(`/playlists/${playlistId}/tracks`, { data: bodyData });
+        i += 100;
+      }
       return true
     } catch (e) {
       console.error(e)
