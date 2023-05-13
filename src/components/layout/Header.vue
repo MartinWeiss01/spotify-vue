@@ -34,7 +34,7 @@ const nav = [
             <h3>Spotify Stats</h3>
           </div>
           <nav class="d-none d-md-flex h-100 ml-4">
-            <v-toolbar-items style="d-flex">
+            <v-toolbar-items>
               <v-btn
                 flat
                 v-for="link in nav"
