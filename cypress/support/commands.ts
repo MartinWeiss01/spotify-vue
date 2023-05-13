@@ -36,4 +36,32 @@
 //   }
 // }
 
-export {}
+//@ts-ignore
+import { CODE_VERIFIER, AUTH_CODE, ACCESS_TOKEN, REFRESH_TOKEN, EXPIRES_IN } from './privkeys.js'
+
+Cypress.Commands.add('spotifyLogin', (email: string, password: string) => {
+  cy.get('input#login-username').type(email)
+  cy.get('input#login-password').type(password)
+  cy.get('button#login-button').click()
+})
+
+Cypress.Commands.add('tokenSignIn', () => {
+  cy.window().then(window => {
+    window.localStorage.setItem('code_verifier', CODE_VERIFIER)
+    window.localStorage.setItem('auth_code', AUTH_CODE)
+    window.localStorage.setItem('access_token', ACCESS_TOKEN)
+    window.localStorage.setItem('refresh_token', REFRESH_TOKEN)
+    window.localStorage.setItem('expires_in', EXPIRES_IN)
+  })
+})
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      spotifyLogin(email: string, password: string): Chainable<void>
+      tokenSignIn(): Chainable<void>
+    }
+  }
+}
+
+export { }
