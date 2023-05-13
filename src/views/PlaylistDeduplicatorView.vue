@@ -10,8 +10,9 @@ import {
   getSimilarityLevelDescription,
   getTrackSimilarityLevel,
 } from "@/utils/playlist";
+import DupliciteItem from "@/components/deduplicator/DupliciteItem.vue";
 
-const DEFAULT_MIN_SIMILARITY_LEVEL = 3;
+const DEFAULT_MIN_SIMILARITY_LEVEL = 1;
 
 const userStore = useUserStore();
 
@@ -63,7 +64,7 @@ function comparePlaylists(
         track1.track,
         track2.track
       );
-      if (similarityLevel > DEFAULT_MIN_SIMILARITY_LEVEL) {
+      if (similarityLevel >= DEFAULT_MIN_SIMILARITY_LEVEL) {
         duplicates.push({
           track1,
           track2,
@@ -276,121 +277,68 @@ const saveChanges = async () => {
       <v-col
         v-for="(duplication, index) in duplicates"
         :key="index"
-        class="mb-4"
+        class="mb-0"
       >
         <v-row justify="center">
-          <span
-            >Similarity Level: {{ duplication.similarityLevel }}/4
-            <small
-              >({{
-                getSimilarityLevelDescription(duplication.similarityLevel)
-              }})</small
-            ></span
-          >
+          <v-chip color="blue">
+            <div class="d-flex align-center">
+              <v-icon start icon="mdi-information-outline" />
+              <span>
+                Similarity Level: {{ duplication.similarityLevel }}/4
+              </span>
+
+              <v-tooltip activator="parent" location="bottom">
+                {{ getSimilarityLevelDescription(duplication.similarityLevel) }}
+              </v-tooltip>
+            </div>
+          </v-chip>
         </v-row>
         <v-row>
           <v-col cols="12" md="6">
-            <v-row>
-              <span>
-                Playlist: {{ userStore.selectedPlaylists.firstPlaylist.name }}
-              </span>
-            </v-row>
+            <DupliciteItem
+              :playlistName="userStore.selectedPlaylists.firstPlaylist.name"
+              :track="duplication.track1"
+            />
 
-            <v-row>
-              <v-col>
-                <v-img
-                  :width="60"
-                  :aspect-ratio="1"
-                  :src="duplication.track1.track.album.images[0].url"
-                  cover
-                ></v-img>
-              </v-col>
-
-              <v-col>
-                <v-row>
-                  <h4>{{ duplication.track1.track.name }}</h4>
-                </v-row>
-                <v-row>
-                  <small>{{ duplication.track1.track.album.name }}</small>
-                </v-row>
-                <v-row>
-                  <small>
-                    {{
-                      duplication.track1.track.artists
-                        .map(artist => artist.name)
-                        .join(", ")
-                    }}
-                  </small>
-                </v-row>
-              </v-col>
-
-              <v-col>
-                <v-btn-toggle
-                  v-model="duplication.track1Delete"
-                  divided
-                  elevation="4"
-                  mandatory
+            <div class="d-flex justify-center mt-2">
+              <v-btn-toggle v-model="duplication.track1Delete" mandatory>
+                <v-btn :value="false" color="spotify" size="small">
+                  <span class="text-caption text-uppercase font-weight-bold"
+                    >Keep</span
+                  ></v-btn
                 >
-                  <v-btn :value="false" color="green" size="small">
-                    Keep
-                  </v-btn>
-                  <v-btn :value="true" color="red" size="small"> Delete </v-btn>
-                </v-btn-toggle>
-              </v-col>
-            </v-row>
+                <v-btn :value="true" color="red" size="small">
+                  <span class="text-caption text-uppercase font-weight-bold"
+                    >Delete</span
+                  ></v-btn
+                >
+              </v-btn-toggle>
+            </div>
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-row>
-              <span>
-                Playlist: {{ userStore.selectedPlaylists.secondPlaylist.name }}
-              </span>
-            </v-row>
+            <DupliciteItem
+              :playlistName="userStore.selectedPlaylists.secondPlaylist.name"
+              :track="duplication.track2"
+            />
 
-            <v-row>
-              <v-col>
-                <v-img
-                  :width="60"
-                  :aspect-ratio="1"
-                  :src="duplication.track2.track.album.images[0].url"
-                  cover
-                ></v-img>
-              </v-col>
-
-              <v-col>
-                <v-row>
-                  <h4>{{ duplication.track2.track.name }}</h4>
-                </v-row>
-                <v-row>
-                  <small>{{ duplication.track2.track.album.name }}</small>
-                </v-row>
-                <v-row>
-                  <small>
-                    {{
-                      duplication.track2.track.artists
-                        .map(artist => artist.name)
-                        .join(", ")
-                    }}
-                  </small>
-                </v-row>
-              </v-col>
-
-              <v-col>
-                <v-btn-toggle
-                  v-model="duplication.track2Delete"
-                  divided
-                  elevation="4"
+            <div class="d-flex justify-center mt-2">
+              <v-btn-toggle v-model="duplication.track2Delete" mandatory>
+                <v-btn :value="false" color="spotify" size="small">
+                  <span class="text-caption text-uppercase font-weight-bold"
+                    >Keep</span
+                  ></v-btn
                 >
-                  <v-btn :value="false" color="green" size="small">
-                    Keep
-                  </v-btn>
-                  <v-btn :value="true" color="red" size="small"> Delete </v-btn>
-                </v-btn-toggle>
-              </v-col>
-            </v-row>
+                <v-btn :value="true" color="red" size="small">
+                  <span class="text-caption text-uppercase font-weight-bold"
+                    >Delete</span
+                  ></v-btn
+                >
+              </v-btn-toggle>
+            </div>
           </v-col>
         </v-row>
-        <v-divider class="my-3"></v-divider>
+        <v-divider class="my-6"></v-divider>
       </v-col>
     </v-container>
 
@@ -402,11 +350,11 @@ const saveChanges = async () => {
     >
       <v-btn
         @click="saveChanges"
-        class="text-none font-weight-semibold mb-6"
-        color="primary"
-        elevation="4"
+        class="font-weight-semibold mb-6"
+        color="spotify"
+        size="large"
       >
-        Apply
+        Apply Changes
       </v-btn>
     </v-row>
   </div>

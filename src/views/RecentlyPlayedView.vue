@@ -72,7 +72,10 @@ const getTimeAgoString = (timedate: Date): string => {
             <v-img
               :width="60"
               :aspect-ratio="1"
-              :src="track.track.album.images[0].url"
+              :src="
+                track.track.album?.images[0]?.url ??
+                '/fallbacks/no_album_image.svg'
+              "
               cover
             ></v-img>
           </div>

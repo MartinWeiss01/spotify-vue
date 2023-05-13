@@ -13,7 +13,9 @@ const props = defineProps<{
   <div class="d-flex mb-6">
     <v-card class="mx-auto pa-4 bg-grey-darken-4" max-width="220">
       <v-img
-        :src="selectedPlaylist.images[0].url"
+        :src="
+          selectedPlaylist?.images[0]?.url ?? '/fallbacks/no_playlist_image.svg'
+        "
         width="200"
         aspect-ratio="1/1"
         cover
