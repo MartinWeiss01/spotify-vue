@@ -234,6 +234,7 @@ const saveChanges = async () => {
             userStore.selectedPlaylists.firstPlaylist.id ===
               userStore.selectedPlaylists.secondPlaylist.id
           "
+          id="duplicates-button"
         >
           Find Duplicates
         </v-btn>
