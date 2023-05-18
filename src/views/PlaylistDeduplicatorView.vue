@@ -11,6 +11,7 @@ import {
   getTrackSimilarityLevel,
 } from "@/utils/playlist";
 import DupliciteItem from "@/components/deduplicator/DupliciteItem.vue";
+import PlaylistPickerPlaceholder from "@/components/deduplicator/PlaylistPickerPlaceholder.vue";
 
 const DEFAULT_MIN_SIMILARITY_LEVEL = 1;
 
@@ -145,7 +146,7 @@ const saveChanges = async () => {
 
     if (totalDeleted === 0) {
       alert.value = {
-        title: "Success",
+        title: "Done!",
         description: `No changes were made to the playlists.`,
         type: "info",
         show: true,
@@ -186,7 +187,16 @@ const saveChanges = async () => {
     </v-container>
 
     <v-container>
-      <v-row>
+      <v-row v-if="userStore.playlists.loading === true">
+        <v-col>
+          <PlaylistPickerPlaceholder />
+        </v-col>
+        <v-col>
+          <PlaylistPickerPlaceholder />
+        </v-col>
+      </v-row>
+
+      <v-row v-else>
         <v-col>
           <PlaylistPicker
             :playlists="userStore.playlists.playlist"
@@ -222,7 +232,10 @@ const saveChanges = async () => {
         </v-col>
       </v-row>
 
-      <v-row v-if="processing != true" justify="center">
+      <v-row
+        v-if="userStore.playlists.loading === false && processing != true"
+        justify="center"
+      >
         <v-btn
           @click="onFindingDuplicates"
           class="text-none font-weight-semibold"
