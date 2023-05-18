@@ -7,7 +7,11 @@ const props = defineProps<{
 <template>
   <div class="px-4">
     <h1>Your Taste</h1>
-    <v-container>
+    <div v-if="props.genres.length === 0">
+      <p class="mt-4">Not enough data available yet</p>
+    </div>
+
+    <v-container v-else>
       <v-row class="pt-4">
         <v-chip
           class="mr-2 mb-2"
