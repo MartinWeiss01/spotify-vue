@@ -56,7 +56,7 @@ const groupedTracks = computed(() => {
       </div>
 
       <div v-else class="mt-4">
-        <h4>No tracks found</h4>
+        <p>No tracks found</p>
       </div>
     </div>
   </div>
