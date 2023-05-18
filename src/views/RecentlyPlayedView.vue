@@ -2,6 +2,7 @@
 import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import { useUserStore } from "@/stores/user";
 import { computed, onMounted } from "vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 const userStore = useUserStore();
 
@@ -58,52 +59,66 @@ const getTimeAgoString = (timedate: Date): string => {
   <div class="pa-4 d-flex justify-center flex-column">
     <h1>Recently Played</h1>
 
-    <div v-for="(group, date) in groupedTracks" :key="date" class="mt-4">
-      <h2>{{ date }}</h2>
-      <v-divider class="my-3"></v-divider>
-
+    <div v-if="userStore.recentlyPlayed.loading === false">
       <div
-        v-for="(track, index) in group"
-        :key="index"
-        class="d-flex flex-column flex-sm-row justify-sm-space-between align-sm-center mb-2"
+        v-if="userStore.recentlyPlayed.items.length !== 0"
+        v-for="(group, date) in groupedTracks"
+        :key="date"
+        class="mt-4"
       >
-        <div class="d-flex align-sm-center">
-          <div>
-            <v-img
-              :width="60"
-              :aspect-ratio="1"
-              :src="
-                track.track.album?.images[0]?.url ??
-                '/fallbacks/no_album_image.svg'
-              "
-              cover
-            ></v-img>
+        <h2>{{ date }}</h2>
+        <v-divider class="my-3"></v-divider>
+
+        <div
+          v-for="(track, index) in group"
+          :key="index"
+          class="d-flex flex-column flex-sm-row justify-sm-space-between align-sm-center mb-2"
+        >
+          <div class="d-flex align-sm-center">
+            <div>
+              <v-img
+                :width="60"
+                :aspect-ratio="1"
+                :src="
+                  track.track.album?.images[0]?.url ??
+                  '/fallbacks/no_album_image.svg'
+                "
+                cover
+              ></v-img>
+            </div>
+            <div class="d-flex flex-column ml-4">
+              <span class="track-name font-weight-bold">
+                {{ track.track.name }}
+              </span>
+              <span class="artist-name">
+                {{ track.track.artists.map(artist => artist.name).join(", ") }}
+              </span>
+              <small
+                :title="`${track.played_at.toLocaleString()} UTC`"
+                class="d-flex d-sm-none"
+              >
+                {{ getTimeAgoString(track.played_at) }}
+              </small>
+            </div>
           </div>
-          <div class="d-flex flex-column ml-4">
-            <span class="track-name font-weight-bold">
-              {{ track.track.name }}
-            </span>
-            <span class="artist-name">
-              {{ track.track.artists.map(artist => artist.name).join(", ") }}
-            </span>
-            <small
+
+          <div>
+            <span
               :title="`${track.played_at.toLocaleString()} UTC`"
-              class="d-flex d-sm-none"
+              class="d-none d-sm-flex"
             >
               {{ getTimeAgoString(track.played_at) }}
-            </small>
+            </span>
           </div>
         </div>
-
-        <div>
-          <span
-            :title="`${track.played_at.toLocaleString()} UTC`"
-            class="d-none d-sm-flex"
-          >
-            {{ getTimeAgoString(track.played_at) }}
-          </span>
-        </div>
       </div>
+
+      <div v-else class="mt-4">
+        <h4>No tracks found</h4>
+      </div>
+    </div>
+    <div v-else class="h-100 pa-4">
+      <LoadingSpinner />
     </div>
   </div>
 </template>
