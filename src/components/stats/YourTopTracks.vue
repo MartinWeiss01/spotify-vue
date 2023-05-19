@@ -10,7 +10,11 @@ const props = defineProps<{
 <template>
   <div class="relative">
     <h1 class="pl-4">Your Top Tracks</h1>
-    <v-slide-group class="pt-4 custom-arrow-positions" show-arrows>
+    <v-container v-if="props.tracks.length === 0">
+      <p>Not enough data available yet</p>
+    </v-container>
+
+    <v-slide-group v-else class="pt-4 custom-arrow-positions" show-arrows>
       <MediaItem
         v-for="(track, idx) in props.tracks"
         :key="track.id"
