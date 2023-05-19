@@ -1,4 +1,5 @@
-import type { Track } from "@/model/PlaylistTracks";
+import type { DuplicationItems } from "@/model/Deduplicator";
+import type { PlaylistTrack, Track } from "@/model/PlaylistTracks";
 
 export function getTrackSimilarityLevel(track1: Track, track2: Track): number {
   if (track1.id === null) return 0;
@@ -23,9 +24,45 @@ export function getSimilarityLevelDescription(level: number): string {
   switch (level) {
     case 4: return "The tracks are identical";
     case 3: return "The tracks have the same artists and the same title, but different IDs";
-    case 2: return "The tracks have the same title and at least one common artist, but different IDs";
+    case 2: return "The tracks have the same title and at least one common artist";
     case 1: return "The only match is in the name";
     case 0: return "No match found";
     default: return "Unknown state";
   }
+}
+
+export function getSimilarityActionDescription(level: number): string {
+  switch (level) {
+    case 4: return "Searches only for exactly identical tracks";
+    case 3: return "Accepts identical tracks with different Spotify track ID";
+    case 2: return "Accepts tracks with the same title and at least one common artist";
+    case 1: return "Accepts tracks with the same title";
+    default: return "Unknown state";
+  }
+}
+
+export function comparePlaylists(
+  playlist1: PlaylistTrack[],
+  playlist2: PlaylistTrack[],
+  level: number
+): DuplicationItems[] {
+  let duplicates: DuplicationItems[] = [];
+  playlist1.forEach(track1 => {
+    playlist2.forEach(track2 => {
+      const similarityLevel = getTrackSimilarityLevel(
+        track1.track,
+        track2.track
+      );
+      if (similarityLevel >= level) {
+        duplicates.push({
+          track1,
+          track2,
+          track1Delete: false,
+          track2Delete: false,
+          similarityLevel,
+        });
+      }
+    });
+  });
+  return duplicates;
 }

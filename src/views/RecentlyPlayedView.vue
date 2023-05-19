@@ -2,21 +2,15 @@
 import type { RecentlyPlayedItem } from "@/model/RecentlyPlayed";
 import { useUserStore } from "@/stores/user";
 import { computed, onMounted } from "vue";
+import { formatDate } from "@/utils/dateutils";
+import TrackSkeleton from "@/components/recentlyplayed/TrackSkeleton.vue";
+import TrackItem from "@/components/recentlyplayed/TrackItem.vue";
 
 const userStore = useUserStore();
 
 onMounted(() => {
   userStore.getRecentlyPlayed();
 });
-
-const formatDate = (timestamp: Date) => {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = date.toLocaleString("en-US", { month: "long" });
-  const day = date.getDate();
-
-  return `${month} ${day}, ${year}`;
-};
 
 const groupedTracks = computed(() => {
   const groups: { [date: string]: RecentlyPlayedItem[] } = {};
@@ -33,76 +27,36 @@ const groupedTracks = computed(() => {
 
   return groups;
 });
-
-const getTimeAgoString = (timedate: Date): string => {
-  const date = new Date(timedate);
-  const now = new Date();
-  const seconds = Math.round((now.valueOf() - date.valueOf()) / 1000);
-  const minutes = Math.round(seconds / 60);
-  const hours = Math.round(minutes / 60);
-  const days = Math.round(hours / 24);
-
-  if (seconds < 60) {
-    return `${seconds} seconds ago`;
-  } else if (minutes < 60) {
-    return `${minutes} minutes ago`;
-  } else if (hours < 24) {
-    return `${hours} hours ago`;
-  } else {
-    return `${days} days ago`;
-  }
-};
 </script>
 
 <template>
   <div class="pa-4 d-flex justify-center flex-column">
     <h1>Recently Played</h1>
 
-    <div v-for="(group, date) in groupedTracks" :key="date" class="mt-4">
-      <h2>{{ date }}</h2>
-      <v-divider class="my-3"></v-divider>
+    <div v-if="userStore.recentlyPlayed.loading === true" class="mt-4">
+      <TrackSkeleton v-for="i in 8" :key="i" class="mb-2" />
+    </div>
 
+    <div v-else>
       <div
-        v-for="(track, index) in group"
-        :key="index"
-        class="d-flex flex-column flex-sm-row justify-sm-space-between align-sm-center mb-2"
+        v-if="userStore.recentlyPlayed.items.length !== 0"
+        v-for="(group, date) in groupedTracks"
+        :key="date"
+        class="mt-4"
       >
-        <div class="d-flex align-sm-center">
-          <div>
-            <v-img
-              :width="60"
-              :aspect-ratio="1"
-              :src="
-                track.track.album?.images[0]?.url ??
-                '/fallbacks/no_album_image.svg'
-              "
-              cover
-            ></v-img>
-          </div>
-          <div class="d-flex flex-column ml-4">
-            <span class="track-name font-weight-bold">
-              {{ track.track.name }}
-            </span>
-            <span class="artist-name">
-              {{ track.track.artists.map(artist => artist.name).join(", ") }}
-            </span>
-            <small
-              :title="`${track.played_at.toLocaleString()} UTC`"
-              class="d-flex d-sm-none"
-            >
-              {{ getTimeAgoString(track.played_at) }}
-            </small>
-          </div>
-        </div>
+        <h2>{{ date }}</h2>
+        <v-divider class="my-3"></v-divider>
 
-        <div>
-          <span
-            :title="`${track.played_at.toLocaleString()} UTC`"
-            class="d-none d-sm-flex"
-          >
-            {{ getTimeAgoString(track.played_at) }}
-          </span>
-        </div>
+        <TrackItem
+          v-for="(track, index) in group"
+          :key="index"
+          :track="track"
+          class="d-flex flex-column flex-sm-row justify-sm-space-between align-sm-center mb-2"
+        ></TrackItem>
+      </div>
+
+      <div v-else class="mt-4">
+        <p>No tracks found</p>
       </div>
     </div>
   </div>
