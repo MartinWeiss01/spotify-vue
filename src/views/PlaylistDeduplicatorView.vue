@@ -8,18 +8,12 @@ import { useUserStore } from "@/stores/user";
 import { onMounted, ref } from "vue";
 import {
   getSimilarityLevelDescription,
-  getTrackSimilarityLevel,
+  comparePlaylists,
 } from "@/utils/playlist";
 import DupliciteItem from "@/components/deduplicator/DupliciteItem.vue";
 import PlaylistPickerPlaceholder from "@/components/deduplicator/PlaylistPickerPlaceholder.vue";
-
-const DEFAULT_MIN_SIMILARITY_LEVEL = 1;
-
-const userStore = useUserStore();
-
-onMounted(() => {
-  userStore.getPlaylists();
-});
+import SimilarityPicker from "@/components/deduplicator/SimilarityPicker.vue";
+import DupliciteToggleAction from "@/components/deduplicator/DupliciteToggleAction.vue";
 
 type Alert = {
   title: string;
@@ -28,6 +22,13 @@ type Alert = {
   show: boolean;
 };
 
+type TrackURI = {
+  uri: string;
+};
+
+const DEFAULT_MIN_SIMILARITY_LEVEL = 3;
+const DEFAULT_STEP_MESSAGE = "Preparing...";
+const DEFAULT_PROGRESS_STEP = 0;
 const DEFAULT_ALERT: Alert = {
   title: "",
   description: "",
@@ -35,7 +36,18 @@ const DEFAULT_ALERT: Alert = {
   show: false,
 };
 
+const userStore = useUserStore();
 const alert = ref(DEFAULT_ALERT);
+const processing = ref(false);
+const progressStep = ref(DEFAULT_PROGRESS_STEP);
+const currentStepMessage = ref(DEFAULT_STEP_MESSAGE);
+const similarityLevel = ref(DEFAULT_MIN_SIMILARITY_LEVEL);
+const duplicates = ref<DuplicationItems[]>([]);
+const allowSelect = ref(true);
+
+onMounted(() => {
+  userStore.getPlaylists();
+});
 
 const onFirstPlaylistSelect = (playlist: UserPlaylistItem) => {
   userStore.selectedPlaylists.firstPlaylist = playlist;
@@ -49,66 +61,52 @@ const onSecondPlaylistSelect = (playlist: UserPlaylistItem) => {
   userStore.selectedPlaylists.secondPlaylistReady = true;
 };
 
-const processing = ref(false);
-const progressStep = ref(0);
-const currentStepMessage = ref("Preparing...");
-const duplicates = ref<DuplicationItems[]>([]);
-
-function comparePlaylists(
-  playlist1: PlaylistTrack[],
-  playlist2: PlaylistTrack[]
-): DuplicationItems[] {
-  let duplicates: DuplicationItems[] = [];
-  playlist1.forEach(track1 => {
-    playlist2.forEach(track2 => {
-      const similarityLevel = getTrackSimilarityLevel(
-        track1.track,
-        track2.track
-      );
-      if (similarityLevel >= DEFAULT_MIN_SIMILARITY_LEVEL) {
-        duplicates.push({
-          track1,
-          track2,
-          track1Delete: false,
-          track2Delete: false,
-          similarityLevel,
-        });
-      }
-    });
-  });
-  return duplicates;
-}
+const updateProgress = (step: number, message: string) => {
+  progressStep.value = step;
+  currentStepMessage.value = message;
+};
 
 const onFindingDuplicates = async () => {
+  allowSelect.value = false;
   duplicates.value = [];
   processing.value = true;
   alert.value = DEFAULT_ALERT;
-  progressStep.value = 0;
+  updateProgress(DEFAULT_PROGRESS_STEP, DEFAULT_STEP_MESSAGE);
 
   let firstPlaylistItems: PlaylistTrack[] = [];
-  currentStepMessage.value = "Fetching tracks from first playlist...";
-  progressStep.value = 25;
+  updateProgress(25, "Fetching tracks from first playlist...");
   firstPlaylistItems = await userStore.getPlaylistTracks(
     userStore.selectedPlaylists.firstPlaylist.id
   );
 
   let secondPlaylistItems: PlaylistTrack[] = [];
-  currentStepMessage.value = "Fetching tracks from second playlist...";
-  progressStep.value = 50;
+  updateProgress(50, "Fetching tracks from second playlist...");
   secondPlaylistItems = await userStore.getPlaylistTracks(
     userStore.selectedPlaylists.secondPlaylist.id
   );
 
-  currentStepMessage.value = "Finding duplicates...";
-  progressStep.value = 75;
-  duplicates.value = comparePlaylists(firstPlaylistItems, secondPlaylistItems);
+  updateProgress(75, "Finding duplicates...");
+  duplicates.value = comparePlaylists(
+    firstPlaylistItems,
+    secondPlaylistItems,
+    similarityLevel.value
+  );
 
-  currentStepMessage.value = "Done!";
-  progressStep.value = 100;
+  if (duplicates.value.length === 0) {
+    allowSelect.value = true;
+  }
+  updateProgress(100, "Done!");
 };
 
-type TrackURI = {
-  uri: string;
+const cancelChanges = () => {
+  alert.value = {
+    title: "Cancelled",
+    description: `No changes were made to the playlists.`,
+    type: "info",
+    show: true,
+  };
+  processing.value = false;
+  allowSelect.value = true;
 };
 
 const saveChanges = async () => {
@@ -170,6 +168,7 @@ const saveChanges = async () => {
   }
 
   processing.value = false;
+  allowSelect.value = true;
 };
 </script>
 <template>
@@ -200,60 +199,67 @@ const saveChanges = async () => {
         <v-col>
           <PlaylistPicker
             :playlists="userStore.playlists.playlist"
-            v-if="userStore.playlists.loading === false && processing != true"
+            v-if="userStore.playlists.loading === false && allowSelect === true"
             @select-update="onFirstPlaylistSelect"
           >
           </PlaylistPicker>
-          <div v-else></div>
 
           <PlaylistCard
             class="grey-lighten-2"
             :selected-playlist="userStore.selectedPlaylists.firstPlaylist"
             v-if="userStore.selectedPlaylists.firstPlaylistReady"
           ></PlaylistCard>
-          <div v-else></div>
         </v-col>
 
         <v-col>
           <PlaylistPicker
             :playlists="userStore.playlists.playlist"
-            v-if="userStore.playlists.loading === false && processing != true"
+            v-if="userStore.playlists.loading === false && allowSelect === true"
             @select-update="onSecondPlaylistSelect"
           >
           </PlaylistPicker>
-          <div v-else></div>
 
           <PlaylistCard
             class="grey-lighten-2"
             :selected-playlist="userStore.selectedPlaylists.secondPlaylist"
             v-if="userStore.selectedPlaylists.secondPlaylistReady"
           ></PlaylistCard>
-          <div v-else></div>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col v-if="allowSelect === true">
+          <SimilarityPicker
+            :similarityLevel="similarityLevel"
+            @update:similarityLevel="similarityLevel = $event"
+          />
         </v-col>
       </v-row>
 
       <v-row
-        v-if="userStore.playlists.loading === false && processing != true"
+        v-if="userStore.playlists.loading === false && allowSelect === true"
         justify="center"
       >
         <v-btn
+          id="duplicates-button"
+          prepend-icon="mdi-magnify"
           @click="onFindingDuplicates"
-          class="text-none font-weight-semibold"
           variant="tonal"
-          elevation="4"
           :disabled="
             userStore.selectedPlaylists.firstPlaylistReady === false ||
             userStore.selectedPlaylists.secondPlaylistReady === false ||
             userStore.selectedPlaylists.firstPlaylist.id ===
               userStore.selectedPlaylists.secondPlaylist.id
           "
-          id="duplicates-button"
         >
           Find Duplicates
         </v-btn>
       </v-row>
 
-      <v-col v-else>
+      <v-col
+        v-if="userStore.playlists.loading === false && processing !== false"
+      >
+        <v-divider class="my-16" />
         <h2 class="text-center font-weight-semibold mb-6">
           {{ currentStepMessage }}
         </h2>
@@ -262,31 +268,29 @@ const saveChanges = async () => {
           v-if="processing"
           v-model="progressStep"
           color="primary"
+          :indeterminate="progressStep !== 100"
         ></v-progress-linear>
       </v-col>
     </v-container>
 
     <v-container>
       <v-col v-if="duplicates.length > 0" class="mb-16">
-        <v-row justify="center">
-          <h1>Found Duplicates</h1>
-        </v-row>
-        <v-row justify="center">
-          <p>A total of {{ duplicates.length }} duplicates were found</p>
-        </v-row>
-        <v-row justify="center">
-          <p>Select which tracks you want to delete from each playlist</p>
-        </v-row>
+        <v-col justify="center">
+          <h1 class="text-center">Found Duplicates</h1>
+          <p class="text-center">
+            A total of {{ duplicates.length }} duplicates were found
+          </p>
+          <p class="text-center">
+            Select which tracks you want to delete from each playlist
+          </p>
+        </v-col>
       </v-col>
-      <v-col
-        v-else-if="
-          processing === true && progressStep === 100 && duplicates.length === 0
-        "
-      >
+      <v-col v-else-if="processing === true && progressStep === 100">
         <v-row justify="center" class="pb-6">
           <h1>No Duplicates Found</h1>
         </v-row>
       </v-col>
+
       <!-- Loop through duplications on rows  -->
       <v-col
         v-for="(duplication, index) in duplicates"
@@ -314,20 +318,7 @@ const saveChanges = async () => {
               :track="duplication.track1"
             />
 
-            <div class="d-flex justify-center mt-2">
-              <v-btn-toggle v-model="duplication.track1Delete" mandatory>
-                <v-btn :value="false" color="spotify" size="small">
-                  <span class="text-caption text-uppercase font-weight-bold"
-                    >Keep</span
-                  ></v-btn
-                >
-                <v-btn :value="true" color="red" size="small">
-                  <span class="text-caption text-uppercase font-weight-bold"
-                    >Delete</span
-                  ></v-btn
-                >
-              </v-btn-toggle>
-            </div>
+            <DupliciteToggleAction v-model="duplication.track1Delete" />
           </v-col>
 
           <v-col cols="12" md="6">
@@ -336,40 +327,33 @@ const saveChanges = async () => {
               :track="duplication.track2"
             />
 
-            <div class="d-flex justify-center mt-2">
-              <v-btn-toggle v-model="duplication.track2Delete" mandatory>
-                <v-btn :value="false" color="spotify" size="small">
-                  <span class="text-caption text-uppercase font-weight-bold"
-                    >Keep</span
-                  ></v-btn
-                >
-                <v-btn :value="true" color="red" size="small">
-                  <span class="text-caption text-uppercase font-weight-bold"
-                    >Delete</span
-                  ></v-btn
-                >
-              </v-btn-toggle>
-            </div>
+            <DupliciteToggleAction v-model="duplication.track2Delete" />
           </v-col>
         </v-row>
-        <v-divider class="my-6"></v-divider>
+        <v-divider class="my-10"></v-divider>
       </v-col>
     </v-container>
 
-    <v-row
+    <v-col
       v-if="
         processing === true && progressStep === 100 && duplicates.length > 0
       "
-      justify="center"
+      class="mb-6"
     >
-      <v-btn
-        @click="saveChanges"
-        class="font-weight-semibold mb-6"
-        color="spotify"
-        size="large"
-      >
-        Apply Changes
-      </v-btn>
-    </v-row>
+      <v-row justify="center">
+        <v-btn
+          @click="saveChanges"
+          class="font-weight-semibold mb-4"
+          color="spotify"
+          size="large"
+          prepend-icon="mdi-check"
+        >
+          Apply Changes
+        </v-btn>
+      </v-row>
+      <v-row @click="cancelChanges" justify="center">
+        <v-btn color="red" variant="text">Cancel</v-btn>
+      </v-row>
+    </v-col>
   </div>
 </template>
